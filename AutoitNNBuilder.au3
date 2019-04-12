@@ -1,5 +1,6 @@
 #include <Array.au3>
 #include "Include\myArray.au3"
+#include "Include\myDebug.au3"
 #cs Описание проекта
 	Проект носит исключительно академический характер
 	Проект будет реализовываться на AutoIt т.к. данный язык очен прост для освоения и хорошо
@@ -15,8 +16,11 @@
 		https://www.ozon.ru/context/detail/id/141796497/?_bctx=CAUQqN_tIQ
 		Это без преувеличений - САМАЯ лучшая книга для старта изучений нейронных сетей
 #ce
-
 Opt("MustDeclareVars", 1)
+
+_DebugSetup(@ScriptName, True,2)
+_DebugOut("Запуск " & @ScriptName)
+my_Debug("Модуль отладки включен")
 
 Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
 	#cs Инициализирует трехслойную нейронную сеть.
@@ -26,15 +30,25 @@ Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
 			$output_nodes - Количество нейронов выходного слоя
 			$learning_rate - Коэффициент обучения	
 	#ce
-	;Создаем массивы с весами соединений нейронов
-	;WIH - Weights Input Layer to Hidden Layer - Веса соединений между входным слоем и скрытым
-	;WHO - Weights Hidden Layer to Output Layer - Веса соединений между скрытым слоем и выходным
-	Global $WIH = _ArrayCreate($hidden_nodes, $input_nodes) ;Создаем массив заполненный случайными числами
-	Global $WHO = _ArrayCreate($output_nodes, $hidden_nodes) ;Создаем массив заполненный случайными числами
+	my_Debug("Init - Start", 1)
+	my_Debug("На вход получены значения: ", 1)
+	my_Debug("$input_nodes = " & $input_nodes)
+	my_Debug("$hidden_nodes = " & $hidden_nodes)
+	my_Debug("$output_nodes = " & $output_nodes)
+	my_Debug("$learning_rate = " & $learning_rate)
+	
+	my_Debug("Создаю массивы связей", -1)
+	;Создаем массивы с весами связей нейронов
+	;WIH - Weights Input Layer to Hidden Layer - Веса связей между входным слоем и скрытым
+	;WHO - Weights Hidden Layer to Output Layer - Веса связей между скрытым слоем и выходным
+	Global $WIH = my_ArrayCreate($hidden_nodes, $input_nodes) ;Создаем массив заполненный случайными числами
+	Global $WHO = my_ArrayCreate($output_nodes, $hidden_nodes) ;Создаем массив заполненный случайными числами
 	
 	;Обозначяем ключевые параметры в глобальных переменных
 	Global $LR = $learning_rate
 ;~ 	Global Const $I_NODES = $input_nodes
 ;~ 	Global Const $H_NODES = $hidden_nodes
 ;~ 	Global Const $O_NODES = $output_nodes
+
+	my_Debug("Init - End", -1)
 EndFunc
