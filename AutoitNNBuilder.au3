@@ -1,6 +1,9 @@
 #include <Array.au3>
+#include <File.au3>
 #include "Include\myArray.au3"
 #include "Include\myDebug.au3"
+#include "Include\myFile.au3"
+#include "temp_area.au3"
 #cs Описание проекта
 	Проект носит исключительно академический характер
 	Проект будет реализовываться на AutoIt т.к. данный язык очен прост для освоения и хорошо
@@ -21,6 +24,7 @@ Opt("MustDeclareVars", 1)
 _DebugSetup(@ScriptName, True,2)
 _DebugOut("Запуск " & @ScriptName)
 my_Debug("Модуль отладки включен")
+
 
 Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
 	#cs Инициализирует трехслойную нейронную сеть.
