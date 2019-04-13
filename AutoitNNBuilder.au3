@@ -216,6 +216,20 @@ Func _Matrix_element_Mul($mat1,  $mat2)
 	Next
 	Return $afMatrix
 EndFunc
+
+Func _Matrix_applyLR($mat1, $num)
+	#cs - Применяет к матрице Learning Rate
+		Поэлементное Умножение матрицы на заданное число
+	
+	#ce
+	Local $afMatrix[UBound($mat1, 1)][UBound($mat1, 2)]
+	For $row = 0 To UBound($afMatrix, 1) -1 Step 1
+		For $col = 0 To UBound($afMatrix, 2) -1 Step 1
+			$afMatrix[$row][$col] = $mat1[$row][$col] * $num
+		Next
+	Next
+	Return $afMatrix
+EndFunc
 	
 Func _updateLinks($cur_level, $cur_errors, $cur_outputs, $prev_outputs)
 	#cs - Обновляет связи между нейронами двух слоёв.
