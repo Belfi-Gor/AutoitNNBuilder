@@ -3,7 +3,7 @@
 #include "Include\myArray.au3"
 #include "Include\myDebug.au3"
 #include "Include\myFile.au3"
-#include "temp_area.au3"
+;~ #include "temp_area.au3"
 #cs Описание проекта
 	Проект носит исключительно академический характер
 	Проект будет реализовываться на AutoIt т.к. данный язык очен прост для освоения и хорошо
@@ -26,9 +26,19 @@ _DebugOut("Запуск " & @ScriptName)
 my_Debug("Модуль отладки включен")
 ;~ temp_test()
 
+#cs Код сырой, в середине написания пришлось пасть до говнокода т.к. сил чота небыло
+	Но как проверить что нейросеть работает?
+#ce
+;1) Инициализируем нейросеть из 784 нейронов входного слоя, 200 нейронов скрытого слоя и 10 нейронов выходного слоя
 Init(784, 200, 10,  0.3)
-_trainNetwork()
+;2) Запускаем тестирование сети и смотрим на статистику
 _testNetwork()
+;3) Запускаем обучение сети
+_trainNetwork()
+;4) Повторно запускаем тестирование сети и лицезреем шикордятину
+_testNetwork()
+;На этом этапе в коде захардкодены самые малые датасеты. 100 на обучение 10 на тестирование
+Exit 
 
 Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
 	#cs Инициализирует трехслойную нейронную сеть.
@@ -324,4 +334,37 @@ Func Query($inputs)
 	Local $final_inputs = _Matrix_Product($who, $hidden_outputs)
 	Local $final_outputs = _activation_SigmoidMatrix($final_inputs)
 	Return $final_outputs
+EndFunc
+
+Func _testNetwork()
+	#cs Производит тестирование нейросети по тестовому датасету
+			Сопоставляет ожидаемые значения с фактическими
+			Тестовый датасет - это набор данных полностью идентичных учебному, но данные тестового датасета не присутствуют в учебном
+				чтобы сеть не подстроилась для работы исключительно с этими записями.
+				
+	#ce
+	my_Debug("Получаю тестовые данные MNIST",  "header")
+	
+	Local $testsource = my_readTrainDataFromFile(@ScriptDir& "\mnist_test_10.csv", False )
+	my_Debug("Полученно тестовых записей: " & UBound($testsource))
+	Local $aInputs, $aTargets
+	Local $testing_Data = MNIST_PrepData($aInputs, $aTargets, $testsource)
+	Local $counter = 0
+	Local $success = 0
+	Local $curTarget
+	Local $curInputs
+	For $i = 0 To UBound($aTargets) -1 Step 1
+		$counter += 1
+		$curTarget = _ArrayExtract($aTargets, $i, $i)
+		_ArrayTranspose($curTarget)
+		$curInputs = _ArrayExtract($aInputs, $i, $i)
+
+		Local $var =  Query($curInputs)
+		If _ArrayMaxIndex($curTarget) = _ArrayMaxIndex($var) Then
+			my_Debug($i& "	Статистика:" & Round($success / $counter, 2) * 100 & "%	Совпадение:" & _ArrayMaxIndex($var)&"=="&_ArrayMaxIndex($curTarget))
+			$success += 1
+		Else
+			my_Debug($i& "	Статистика:" & Round($success / $counter, 2) * 100 & "%	Неудача:" & _ArrayMaxIndex($var)&"<>"&_ArrayMaxIndex($curTarget))
+		EndIf
+	Next
 EndFunc
