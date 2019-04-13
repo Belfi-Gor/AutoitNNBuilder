@@ -204,6 +204,8 @@ Func _Matrix_element_Sum($mat1, $mat2)
 	Return $afMatrix
 EndFunc 
 	
+
+	
 Func _updateLinks($cur_level, $cur_errors, $cur_outputs, $prev_outputs)
 	#cs - Обновляет связи между нейронами двух слоёв.
 		Принимает на вход:
@@ -219,21 +221,21 @@ Func _updateLinks($cur_level, $cur_errors, $cur_outputs, $prev_outputs)
 	Next
 
 	Local $uL_step1 =  _Matrix_element_Sub($AllOneMatrix, $cur_outputs)
-	Local $uL_step2 =  _MatrixPoelMul($uL_step1, $cur_outputs)
-	Local $uL_step3 =  _MatrixPoelMul($uL_step2, $cur_errors)
+	Local $uL_step2 =  _Matrix_element_Mul($uL_step1, $cur_outputs)
+	Local $uL_step3 =  _Matrix_element_Mul($uL_step2, $cur_errors)
 	_ArrayTranspose($prev_outputs)
 	Local $uL_step4 =  _Matrix_Product($uL_step3, $prev_outputs)
-	Local $uL_step5 =  _MatrixNumMul($uL_step4, $lr)
+	Local $uL_step5 =  _Matrix_applyLR($uL_step4, $lr)
 	Return $uL_step5
 EndFunc
 
 Func Train($inputs, $targets)
 	#cs - Производит один обучающий подход
-	
+
 		Принимает на вход:
 			$inputs - Одну строку массива входных данных
 			$targets - Одну строку массива целей
-			
+
 		Вносит изменения в нейросеть путем модификации переменных WHO и WIH	
 	#ce
 	my_Debug("Train - Start", 1)
@@ -255,4 +257,29 @@ Func Train($inputs, $targets)
 	Local $temp2 = _updateLinks($wih, $hidden_errors, $hidden_outputs, $inputs)
 	$WIH = _Matrix_element_Sum($temp2, $wih)
 	my_Debug("Train - Stop", -1)
+EndFunc
+
+Func _trainNetwork()
+	my_Debug("_trainNetwork - Start", 1)
+	#cs Инициализирует однократное обучение нейросети по датасету (эпоху) 
+	
+	#ce
+	;Загружаем тренировочные данные
+	Local $trainsource = my_readTrainDataFromFile(@ScriptDir&"\mnist_train_100.csv") ;загружаем учебную подборку
+	
+	
+	;Подготавливаем полученный массив, формируя массивы целевых и входных данных
+	Local $aInputs, $aTargets
+	MNIST_PrepData($aInputs, $aTargets, $trainsource) ;подготавливаем учебные данные перед передачей их в нейросеть
+	If @error Then MsgBox(0, @error, @extended)
+
+	;Циклично извлекает из целевого и входного массива по 1й строке за раз и осуществляет 1 подход обучения с использованием этих данных.
+	Local $curTarget, $curInputs
+	For $i = 0 To UBound($aTargets, 1) -1 Step 1
+		my_Debug("Учу " & $i)
+		$curTarget = _ArrayExtract($aTargets, $i, $i)
+		$curInputs = _ArrayExtract($aInputs, $i, $i)
+		Train($curInputs, $curTarget)
+	Next
+	my_Debug("_trainNetwork - Stop", -1)
 EndFunc
