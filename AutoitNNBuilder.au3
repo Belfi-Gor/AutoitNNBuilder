@@ -24,7 +24,11 @@ Opt("MustDeclareVars", 1)
 _DebugSetup(@ScriptName, True,2)
 _DebugOut("Запуск " & @ScriptName)
 my_Debug("Модуль отладки включен")
-temp_test()
+;~ temp_test()
+
+Init(784, 200, 10,  0.3)
+_trainNetwork()
+_testNetwork()
 
 Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
 	#cs Инициализирует трехслойную нейронную сеть.
@@ -301,10 +305,23 @@ Func _trainNetwork()
 	;Циклично извлекает из целевого и входного массива по 1й строке за раз и осуществляет 1 подход обучения с использованием этих данных.
 	Local $curTarget, $curInputs
 	For $i = 0 To UBound($aTargets, 1) -1 Step 1
+;~ 	For $i = 0 To 1 -1 Step 1
 		my_Debug("Учу " & $i)
 		$curTarget = _ArrayExtract($aTargets, $i, $i)
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
 		Train($curInputs, $curTarget)
 	Next
 	my_Debug("_trainNetwork - Stop", -1)
+EndFunc
+
+Func Query($inputs)
+	#cs Подает инпуты на вход нейросети и получает результат на выходе
+	
+	#ce
+	_ArrayTranspose($inputs)
+	Local $hidden_inputs = _Matrix_Product($wih, $inputs)
+	Local $hidden_outputs =  _activation_SigmoidMatrix($hidden_inputs)
+	Local $final_inputs = _Matrix_Product($who, $hidden_outputs)
+	Local $final_outputs = _activation_SigmoidMatrix($final_inputs)
+	Return $final_outputs
 EndFunc
