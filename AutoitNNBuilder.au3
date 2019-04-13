@@ -191,3 +191,15 @@ Func _Matrix_element_Sub($mat1,  $mat2)
 	Return $afMatrix
 EndFunc
 
+Func _Matrix_element_Sum($mat1, $mat2)
+	#cs - Поэлементное сложение матриц одинакового размера
+	
+	#ce
+	Local $afMatrix[UBound($mat1, 1)][UBound($mat1, 2)]
+	For $row = 0 To UBound($afMatrix, 1) -1 Step 1
+		For $col = 0 To UBound($afMatrix, 2) -1 Step 1
+			$afMatrix[$row][$col] = $mat1[$row][$col] + $mat2[$row][$col]
+		Next
+	Next
+	Return $afMatrix
+EndFunc 
