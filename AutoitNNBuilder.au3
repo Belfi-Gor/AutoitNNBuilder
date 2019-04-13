@@ -203,3 +203,56 @@ Func _Matrix_element_Sum($mat1, $mat2)
 	Next
 	Return $afMatrix
 EndFunc 
+	
+Func _updateLinks($cur_level, $cur_errors, $cur_outputs, $prev_outputs)
+	#cs - Обновляет связи между нейронами двух слоёв.
+		Принимает на вход:
+			$cur_level - переменная в которую пишется ссылка на $wih или $who чьи связи надо обновить
+			Возможно имена $cur_outpiuts и $prev_outputs не верно отражают суть. Оставим так до времен ремастеринга.
+	
+	#ce
+	Local $AllOneMatrix[UBound($cur_outputs, 1)][UBound($cur_outputs, 2)]
+	For $row = 0 To UBound($AllOneMatrix, 1) -1 Step 1
+		For $col = 0 To UBound($AllOneMatrix, 2) -1 Step 1
+			$AllOneMatrix[$row][$col] = 1
+		Next
+	Next
+
+	Local $uL_step1 =  _Matrix_element_Sub($AllOneMatrix, $cur_outputs)
+	Local $uL_step2 =  _MatrixPoelMul($uL_step1, $cur_outputs)
+	Local $uL_step3 =  _MatrixPoelMul($uL_step2, $cur_errors)
+	_ArrayTranspose($prev_outputs)
+	Local $uL_step4 =  _Matrix_Product($uL_step3, $prev_outputs)
+	Local $uL_step5 =  _MatrixNumMul($uL_step4, $lr)
+	Return $uL_step5
+EndFunc
+
+Func Train($inputs, $targets)
+	#cs - Производит один обучающий подход
+	
+		Принимает на вход:
+			$inputs - Одну строку массива входных данных
+			$targets - Одну строку массива целей
+			
+		Вносит изменения в нейросеть путем модификации переменных WHO и WIH	
+	#ce
+	my_Debug("Train - Start", 1)
+	_ArrayTranspose($inputs)
+	_ArrayTranspose($targets)
+	Local $hidden_inputs = _Matrix_Product($wih, $inputs)
+	Local $hidden_outputs =  _activation_SigmoidMatrix($hidden_inputs)
+	Local $final_inputs = _Matrix_Product($who, $hidden_outputs)
+	Local $final_outputs = _activation_SigmoidMatrix($final_inputs)
+	Local $output_errors = _Matrix_element_Sub($targets, $final_outputs)
+	Local $temp_who = $who
+	_ArrayTranspose($who)
+	Local $hidden_errors =  _Matrix_Product($who, $output_errors)
+
+	$WHO =  $temp_who
+	Local $temp = _updateLinks($who, $output_errors, $final_outputs, $hidden_outputs)
+
+	$WHO = _Matrix_element_Sum($temp, $who)
+	Local $temp2 = _updateLinks($wih, $hidden_errors, $hidden_outputs, $inputs)
+	$WIH = _Matrix_element_Sum($temp2, $wih)
+	my_Debug("Train - Stop", -1)
+EndFunc
