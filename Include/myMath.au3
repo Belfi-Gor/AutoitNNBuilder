@@ -39,14 +39,14 @@ Func _myMath_MatrixProduct($afMatrixA, $afMatrixB)
     Return $afMatrixC ;Возвращаем результат
 EndFunc
 
-Func _myMath_MatrixSub($mat1,  $mat2)
+Func _myMath_MatrixSub($afMatrixA,  $afMatrixB)
 	#cs - Поэлементное вычитание матриц одинакового размера
-	
+		
 	#ce
-	Local $afMatrix[UBound($mat1, 1)][UBound($mat1, 2)]
-	For $row = 0 To UBound($afMatrix, 1) -1 Step 1
-		For $col = 0 To UBound($afMatrix, 2) -1 Step 1
-			$afMatrix[$row][$col] = $mat1[$row][$col] - $mat2[$row][$col]
+	Local $afMatrix[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)]
+	For $iRow = 0 To UBound($afMatrix, 1) -1 Step 1
+		For $iCol = 0 To UBound($afMatrix, 2) -1 Step 1
+			$afMatrix[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] - $afMatrixB[$iRow][$iCol]
 		Next
 	Next
 	Return $afMatrix
