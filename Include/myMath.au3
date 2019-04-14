@@ -33,13 +33,13 @@ Func _myMath_MatrixProduct($afMatrixA, $afMatrixB)
 				;В матрице А столько же столбцов сколько строк в матрице B, поэтому используя только 1 цикл мы можем пройтись по всем их элементами и высчитать элемент матрицы C
                 $fCurElement += ($afMatrixA[$iRowA][$x] * $afMatrixB[$x][$iColB])
             Next
-            $afMatrixC[$iRow][$iCol] = $fCurElement ;Сохраняем расчитанный элемент матрицы C в матрицу C
+            $afMatrixC[$iRowA][$iColB] = $fCurElement ;Сохраняем расчитанный элемент матрицы C в матрицу C
         Next
     Next
     Return $afMatrixC ;Возвращаем результат
 EndFunc
 
-Func _Matrix_element_Sub($mat1,  $mat2)
+Func _myMath_MatrixSub($mat1,  $mat2)
 	#cs - Поэлементное вычитание матриц одинакового размера
 	
 	#ce
