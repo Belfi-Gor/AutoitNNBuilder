@@ -90,16 +90,19 @@ Func _myMath_MatrixMul($afMatrixA,  $afMatrixB)
 	Return $afMatrixC
 EndFunc
 
-Func _Matrix_applyLR($mat1, $num)
-	#cs - Применяет к матрице Learning Rate
-		Поэлементное Умножение матрицы на заданное число
-	
+Func _myMath_MatrixApplyLR($afMatrixA, $fFloat)
+	#cs - Производит поэлементное умножение матрицы A на число в переменной $fFloat
+		Принимает на вход:
+			$afMatrixA - Матрица элементы которой необходимо умножить на $fFloat
+			$fFloat - число на которое необходимо поэлементно умножить матрицу A
+		Результат работы:
+			$afMatrixC - Результат умножения матриц A и B
 	#ce
-	Local $afMatrix[UBound($mat1, 1)][UBound($mat1, 2)]
-	For $row = 0 To UBound($afMatrix, 1) -1 Step 1
-		For $col = 0 To UBound($afMatrix, 2) -1 Step 1
-			$afMatrix[$row][$col] = $mat1[$row][$col] * $num
+	Local $afMatrixC[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)]
+	For $row = 0 To UBound($afMatrixC, 1) -1 Step 1
+		For $col = 0 To UBound($afMatrixC, 2) -1 Step 1
+			$afMatrixC[$row][$col] = $afMatrixA[$row][$col] * $fFloat
 		Next
 	Next
-	Return $afMatrix
+	Return $afMatrixC
 EndFunc
