@@ -1,4 +1,4 @@
-Func my_readTrainDataFromFile($sFileName, $bShuffle = True)
+Func __myFile_FileReadToArray($sFileName, $bShuffle = True)
 	#cs Считывает файл в массив и перемешивает его при необходимости
 		Принимает на вход:
 			$sFileName - string Строку с указанием пути к файлу
