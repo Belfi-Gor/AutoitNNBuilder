@@ -40,7 +40,7 @@ Func _myMath_MatrixProduct($afMatrixA, $afMatrixB)
 EndFunc
 
 Func _myMath_MatrixSub($afMatrixA,  $afMatrixB)
-	#cs - Производит поэлементное вычитание одной матрицы A из матрицы B создавая матрицу C
+	#cs - Производит поэлементное вычитание матрицы A из матрицы B создавая матрицу C
 		Принимает на вход:
 			$afMatrixA - Матрица ИЗ которой необходимо вычитать
 			$afMatrixB - Матрица КОТОРУЮ необходимо вычитать
@@ -48,25 +48,29 @@ Func _myMath_MatrixSub($afMatrixA,  $afMatrixB)
 			$afMatrixC - Результат вычитания матрицы B из матрицы A
 	#ce
 	Local $afMatrixC[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)] ;Создаем новую матрицу, размер новой матрицы будет равен размеру матрицы A. При этом размер матрицы A должен быть равен размеру матрицы B
-	For $iRow = 0 To UBound($afMatrix, 1) -1 Step 1 ;Перебираем все строки
-		For $iCol = 0 To UBound($afMatrix, 2) -1 Step 1 ;Перебираем все колонки
-			$afMatrixC[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] - $afMatrixB[$iRow][$iCol] ;Вычитаем из элемента матрицы A, элемент матрицы C. Оба элемента находятся по адресу [iRow][iCol]
+	For $iRow = 0 To UBound($afMatrixC, 1) -1 Step 1 ;Перебираем все строки
+		For $iCol = 0 To UBound($afMatrixC, 2) -1 Step 1 ;Перебираем все колонки
+			$afMatrixC[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] - $afMatrixB[$iRow][$iCol] ;Вычитаем из элемента матрицы A, элемент матрицы B. Оба элемента находятся по адресу [iRow][iCol]
 		Next
 	Next
 	Return $afMatrixC
 EndFunc
 
-Func _Matrix_element_Sum($mat1, $mat2)
-	#cs - Поэлементное сложение матриц одинакового размера
-	
+Func _myMath_MatrixSum($afMatrixA, $afMatrixB)
+	#cs - Производит поэлементное сложение матрицы A с матрицей B создавая матрицу C
+		Принимает на вход:
+			$afMatrixA - Матрица элементы которой необходимо сложить с матрицей B
+			$afMatrixB - Матрица элементы которой необходимо сложить с матрицей A
+		Результат работы:
+			$afMatrixC - Результат сложения матриц A и B
 	#ce
-	Local $afMatrix[UBound($mat1, 1)][UBound($mat1, 2)]
-	For $row = 0 To UBound($afMatrix, 1) -1 Step 1
-		For $col = 0 To UBound($afMatrix, 2) -1 Step 1
-			$afMatrix[$row][$col] = $mat1[$row][$col] + $mat2[$row][$col]
+	Local $afMatrixC[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)] ;Создаем новую матрицу, размер новой матрицы будет равен размеру матрицы A. При этом размер матрицы A должен быть равен размеру матрицы B
+	For $iRow = 0 To UBound($afMatrixC, 1) -1 Step 1 ;Перебираем все строки
+		For $iCol = 0 To UBound($afMatrixC, 2) -1 Step 1 ;Перебираем все колонки
+			$afMatrixC[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] + $afMatrixB[$iRow][$iCol] ;Вычитаем к элементу матрицы A, элемент матрицы B. Оба элемента находятся по адресу [iRow][iCol]
 		Next
 	Next
-	Return $afMatrix
+	Return $afMatrixC
 EndFunc 
 	
 Func _Matrix_element_Mul($mat1,  $mat2)
