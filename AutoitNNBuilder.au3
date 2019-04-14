@@ -5,8 +5,9 @@
 #include "Include\myArray.au3"
 #include "Include\myDebug.au3"
 #include "Include\myFile.au3"
-;~ #include "temp_area.au3"
 #include "Include\myMath.au3"
+;~ #include "temp_area.au3"
+
 #cs Описание проекта
 	Спецификации используемые при разработке кода:
 		https://www.autoitscript.com/wiki/Best_coding_practices
@@ -243,7 +244,7 @@ Func _trainNetwork()
 	
 	#ce
 	;Загружаем тренировочные данные
-	Local $trainsource = my_readTrainDataFromFile(@ScriptDir&"\mnist_train_100.csv") ;загружаем учебную подборку
+	Local $trainsource = __myFile_FileReadToArray(@ScriptDir&"\mnist_train_100.csv") ;загружаем учебную подборку
 	
 	
 	;Подготавливаем полученный массив, формируя массивы целевых и входных данных
@@ -253,8 +254,8 @@ Func _trainNetwork()
 
 	;Циклично извлекает из целевого и входного массива по 1й строке за раз и осуществляет 1 подход обучения с использованием этих данных.
 	Local $curTarget, $curInputs
-;~ 	For $i = 0 To UBound($aTargets, 1) -1 Step 1
-	For $i = 0 To 1 -1 Step 1
+	For $i = 0 To UBound($aTargets, 1) -1 Step 1
+;~ 	For $i = 0 To 1 -1 Step 1
 		my_Debug("Учу " & $i)
 		$curTarget = _ArrayExtract($aTargets, $i, $i)
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
@@ -285,7 +286,7 @@ Func _testNetwork()
 	#ce
 	my_Debug("Получаю тестовые данные MNIST",  "header")
 	
-	Local $testsource = my_readTrainDataFromFile(@ScriptDir& "\mnist_test_10.csv", False )
+	Local $testsource = __myFile_FileReadToArray(@ScriptDir& "\mnist_test_10.csv")
 	my_Debug("Полученно тестовых записей: " & UBound($testsource))
 	Local $aInputs, $aTargets
 	Local $testing_Data = MNIST_PrepData($aInputs, $aTargets, $testsource)
@@ -308,6 +309,8 @@ Func _testNetwork()
 		EndIf
 	Next
 EndFunc
+
+
 
 Func _saveNetwork($lastRow)
 	#cs - Сохраняет текущий прогресс обучения сети в файлы.
