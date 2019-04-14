@@ -389,4 +389,30 @@ Func _saveNetwork($lastRow)
     FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", $sWho)
 EndFunc
 
+Func _loadNetwork()
+	#cs - Загружает из файла нейросеть, выгруженную туда ранее командой _saveNetwork
+		Помещает в глобальную область массивы wih и who с уже инициализированной нейросетью которую можно тут же применять в деле или же продолжать обучать
+	#ce
+	Local $sWih = FileRead(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
+	Local $aRows = StringSplit($sWih, "@", 2)
+	Local $aCols = StringSplit($aRows[0], "|", 2)
 
+	Global $wih[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($wih, 1) -1 Step 1
+		Local $tempRow = StringSplit($aRows[$row], "|", 2)
+		For $col = 0 To UBound($wih, 2) -1 Step 1
+			$wih[$row][$col] = $tempRow[$col]
+		Next
+	Next
+	Local $sWho = FileRead(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
+	Local $aRows = StringSplit($sWho, "@", 2)
+	Local $aCols = StringSplit($aRows[0], "|", 2)
+
+	Global $who[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($who, 1) -1 Step 1
+		Local $tempRow = StringSplit($aRows[$row], "|", 2)
+		For $col = 0 To UBound($who, 2) -1 Step 1
+			$who[$row][$col] = $tempRow[$col]
+		Next
+	Next
+EndFunc
