@@ -1,5 +1,6 @@
 #include <Array.au3>
 #include <File.au3>
+#include <WinAPIFiles.au3>
 #include "Include\myArray.au3"
 #include "Include\myDebug.au3"
 #include "Include\myFile.au3"
@@ -20,24 +21,18 @@
 		Это без преувеличений - САМАЯ лучшая книга для старта изучений нейронных сетей
 #ce
 Opt("MustDeclareVars", 1)
+Global $networkName = "MNIST_test_100"
+
 
 _DebugSetup(@ScriptName, True,2)
 _DebugOut("Запуск " & @ScriptName)
 my_Debug("Модуль отладки включен")
 ;~ temp_test()
 
-#cs Код сырой, в середине написания пришлось пасть до говнокода т.к. сил чота небыло
-	Но как проверить что нейросеть работает?
-#ce
-;1) Инициализируем нейросеть из 784 нейронов входного слоя, 200 нейронов скрытого слоя и 10 нейронов выходного слоя
 Init(784, 200, 10,  0.3)
-;2) Запускаем тестирование сети и смотрим на статистику
-_testNetwork()
-;3) Запускаем обучение сети
 _trainNetwork()
-;4) Повторно запускаем тестирование сети и лицезреем шикордятину
 _testNetwork()
-;На этом этапе в коде захардкодены самые малые датасеты. 100 на обучение 10 на тестирование
+
 Exit 
 
 Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
@@ -321,6 +316,7 @@ Func _trainNetwork()
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
 		Train($curInputs, $curTarget)
 	Next
+	_saveNetwork($i + 1)
 	my_Debug("_trainNetwork - Stop", -1)
 EndFunc
 
@@ -366,5 +362,57 @@ Func _testNetwork()
 		Else
 			my_Debug($i& "	Статистика:" & Round($success / $counter, 2) * 100 & "%	Неудача:" & _ArrayMaxIndex($var)&"<>"&_ArrayMaxIndex($curTarget))
 		EndIf
+	Next
+EndFunc
+
+Func _saveNetwork($lastRow)
+	#cs - Сохраняет текущий прогресс обучения сети в файлы.
+		На вход принимает:
+			$iLastRow - номер следующей строки датасета с которой нужно будет продолжить обучение
+		Берет из глобальной области:
+			$networkName - Имя текущей обрабатываемой нейронной сети
+			$wih - массив связей входного и скрытого слоёв
+			$who - массив связей скрытого и выходного слоёв
+		Создает в отдельной папке с именем нейросети файлы wih.txt, who.txt и settings.ini
+	#ce
+    FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - settings.ini", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
+	IniWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - settings.ini", "startData", "lastRow", $lastRow)
+
+	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
+	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
+	Local $sWih = _ArrayToString($wih, "|", -1, -1, "@")
+	FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", $sWih)
+
+	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
+	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
+	Local $sWho = _ArrayToString($who, "|", -1, -1, "@")
+    FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", $sWho)
+EndFunc
+
+Func _loadNetwork()
+	#cs - Загружает из файла нейросеть, выгруженную туда ранее командой _saveNetwork
+		Помещает в глобальную область массивы wih и who с уже инициализированной нейросетью которую можно тут же применять в деле или же продолжать обучать
+	#ce
+	Local $sWih = FileRead(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
+	Local $aRows = StringSplit($sWih, "@", 2)
+	Local $aCols = StringSplit($aRows[0], "|", 2)
+
+	Global $wih[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($wih, 1) -1 Step 1
+		Local $tempRow = StringSplit($aRows[$row], "|", 2)
+		For $col = 0 To UBound($wih, 2) -1 Step 1
+			$wih[$row][$col] = $tempRow[$col]
+		Next
+	Next
+	Local $sWho = FileRead(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
+	Local $aRows = StringSplit($sWho, "@", 2)
+	Local $aCols = StringSplit($aRows[0], "|", 2)
+
+	Global $who[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($who, 1) -1 Step 1
+		Local $tempRow = StringSplit($aRows[$row], "|", 2)
+		For $col = 0 To UBound($who, 2) -1 Step 1
+			$who[$row][$col] = $tempRow[$col]
+		Next
 	Next
 EndFunc
