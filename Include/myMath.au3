@@ -40,16 +40,20 @@ Func _myMath_MatrixProduct($afMatrixA, $afMatrixB)
 EndFunc
 
 Func _myMath_MatrixSub($afMatrixA,  $afMatrixB)
-	#cs - Поэлементное вычитание матриц одинакового размера
-		
+	#cs - Производит поэлементное вычитание одной матрицы A из матрицы B создавая матрицу C
+		Принимает на вход:
+			$afMatrixA - Матрица ИЗ которой необходимо вычитать
+			$afMatrixB - Матрица КОТОРУЮ необходимо вычитать
+		Результат работы:
+			$afMatrixC - Результат вычитания матрицы B из матрицы A
 	#ce
-	Local $afMatrix[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)]
-	For $iRow = 0 To UBound($afMatrix, 1) -1 Step 1
-		For $iCol = 0 To UBound($afMatrix, 2) -1 Step 1
-			$afMatrix[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] - $afMatrixB[$iRow][$iCol]
+	Local $afMatrixC[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)] ;Создаем новую матрицу, размер новой матрицы будет равен размеру матрицы A. При этом размер матрицы A должен быть равен размеру матрицы B
+	For $iRow = 0 To UBound($afMatrix, 1) -1 Step 1 ;Перебираем все строки
+		For $iCol = 0 To UBound($afMatrix, 2) -1 Step 1 ;Перебираем все колонки
+			$afMatrixC[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] - $afMatrixB[$iRow][$iCol] ;Вычитаем из элемента матрицы A, элемент матрицы C. Оба элемента находятся по адресу [iRow][iCol]
 		Next
 	Next
-	Return $afMatrix
+	Return $afMatrixC
 EndFunc
 
 Func _Matrix_element_Sum($mat1, $mat2)
