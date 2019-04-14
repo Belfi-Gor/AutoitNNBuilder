@@ -67,23 +67,27 @@ Func _myMath_MatrixSum($afMatrixA, $afMatrixB)
 	Local $afMatrixC[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)] ;Создаем новую матрицу, размер новой матрицы будет равен размеру матрицы A. При этом размер матрицы A должен быть равен размеру матрицы B
 	For $iRow = 0 To UBound($afMatrixC, 1) -1 Step 1 ;Перебираем все строки
 		For $iCol = 0 To UBound($afMatrixC, 2) -1 Step 1 ;Перебираем все колонки
-			$afMatrixC[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] + $afMatrixB[$iRow][$iCol] ;Вычитаем к элементу матрицы A, элемент матрицы B. Оба элемента находятся по адресу [iRow][iCol]
+			$afMatrixC[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] + $afMatrixB[$iRow][$iCol] ;Прибавляем к элементу матрицы A, элемент матрицы B. Оба элемента находятся по адресу [iRow][iCol]
 		Next
 	Next
 	Return $afMatrixC
 EndFunc 
 	
-Func _Matrix_element_Mul($mat1,  $mat2)
-	#cs - Поэлементное Умножение матриц одинакового размера
-	
+Func _myMath_MatrixMul($afMatrixA,  $afMatrixB)
+	#cs - Производит поэлементное умножение матрицы A на матрицу B создавая матрицу C
+		Принимает на вход:
+			$afMatrixA - Матрица элементы которой необходимо умножить на матрицу B
+			$afMatrixB - Матрица элементы которой необходимо умножить на матрицу A
+		Результат работы:
+			$afMatrixC - Результат умножения матриц A и B
 	#ce
-	Local $afMatrix[UBound($mat1, 1)][UBound($mat1, 2)]
-	For $row = 0 To UBound($afMatrix, 1) -1 Step 1
-		For $col = 0 To UBound($afMatrix, 2) -1 Step 1
-			$afMatrix[$row][$col] = $mat1[$row][$col] * $mat2[$row][$col]
+	Local $afMatrixC[UBound($afMatrixA, 1)][UBound($afMatrixA, 2)] ;Создаем новую матрицу, размер новой матрицы будет равен размеру матрицы A. При этом размер матрицы A должен быть равен размеру матрицы B
+	For $iRow = 0 To UBound($afMatrixC, 1) -1 Step 1 ;Перебираем все строки
+		For $iCol = 0 To UBound($afMatrixC, 2) -1 Step 1 ;Перебираем все колонки
+			$afMatrixC[$iRow][$iCol] = $afMatrixA[$iRow][$iCol] * $afMatrixB[$iRow][$iCol] ;Умножаем элемент матрицы A на элемент матрицы B. Оба элемента находятся по адресу [iRow][iCol]
 		Next
 	Next
-	Return $afMatrix
+	Return $afMatrixC
 EndFunc
 
 Func _Matrix_applyLR($mat1, $num)
