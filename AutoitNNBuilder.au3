@@ -1,3 +1,4 @@
+#AutoIt3Wrapper_Au3Check_Parameters=-q -d -w 1 -w 2 -w 3 -w- 4 -w 5 -w 6 -w- 7
 #include <Array.au3>
 #include <File.au3>
 #include <WinAPIFiles.au3>
@@ -7,6 +8,10 @@
 ;~ #include "temp_area.au3"
 #include "Include\myMath.au3"
 #cs Описание проекта
+	Спецификации используемые при разработке кода:
+		https://www.autoitscript.com/wiki/Best_coding_practices
+		https://www.autoitscript.com/wiki/UDF-spec
+		
 	Проект носит исключительно академический характер
 	Проект будет реализовываться на AutoIt т.к. данный язык очен прост для освоения и хорошо
 		подходит для начала изучения программирования
@@ -55,20 +60,28 @@ Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
 	my_Debug("$hidden_nodes = " & $hidden_nodes)
 	my_Debug("$output_nodes = " & $output_nodes)
 	my_Debug("$learning_rate = " & $learning_rate)
-	
 	my_Debug("Создаю массивы связей", -1)
 	;Создаем массивы с весами связей нейронов
-	;WIH - Weights Input Layer to Hidden Layer - Веса связей между входным слоем и скрытым
+	
 	;WHO - Weights Hidden Layer to Output Layer - Веса связей между скрытым слоем и выходным
-	Global $WIH = my_ArrayCreate($hidden_nodes, $input_nodes) ;Создаем массив заполненный случайными числами
-	Global $WHO = my_ArrayCreate($output_nodes, $hidden_nodes) ;Создаем массив заполненный случайными числами
+	Global $WHO = __myArray_Create2DWithRandomFill($output_nodes, $hidden_nodes,  True) ;Создаем массив заполненный случайными числами
+	If @error Then 
+		my_Debug("Ошибка инициализации WHO: [" & @error & "]")
+		Exit 
+	EndIf
+	
+	;WIH - Weights Input Layer to Hidden Layer - Веса связей между входным слоем и скрытым
+	Global $WIH = __myArray_Create2DWithRandomFill($hidden_nodes, $input_nodes,  True) ;Создаем массив заполненный случайными числами
+	If @error Then 
+		my_Debug("Ошибка инициализации WIH: [" & @error & "]")
+		Exit 
+	EndIf
 	
 	;Обозначяем ключевые параметры в глобальных переменных
 	Global $LR = $learning_rate
 ;~ 	Global Const $I_NODES = $input_nodes
 ;~ 	Global Const $H_NODES = $hidden_nodes
 ;~ 	Global Const $O_NODES = $output_nodes
-
 	my_Debug("Init - End", -1)
 EndFunc
 
@@ -185,12 +198,12 @@ Func _updateLinks($cur_level, $cur_errors, $cur_outputs, $prev_outputs)
 		Next
 	Next
 
-	Local $uL_step1 =  _Matrix_element_Sub($AllOneMatrix, $cur_outputs)
-	Local $uL_step2 =  _Matrix_element_Mul($uL_step1, $cur_outputs)
-	Local $uL_step3 =  _Matrix_element_Mul($uL_step2, $cur_errors)
+	Local $uL_step1 =  _myMath_MatrixSub($AllOneMatrix, $cur_outputs)
+	Local $uL_step2 =  _myMath_MatrixMul($uL_step1, $cur_outputs)
+	Local $uL_step3 =  _myMath_MatrixMul($uL_step2, $cur_errors)
 	_ArrayTranspose($prev_outputs)
-	Local $uL_step4 =  _Matrix_Product($uL_step3, $prev_outputs)
-	Local $uL_step5 =  _Matrix_applyLR($uL_step4, $lr)
+	Local $uL_step4 =  _myMath_MatrixProduct($uL_step3, $prev_outputs)
+	Local $uL_step5 =  _myMath_MatrixApplyLR($uL_step4, $lr)
 	Return $uL_step5
 EndFunc
 
@@ -206,21 +219,21 @@ Func Train($inputs, $targets)
 	my_Debug("Train - Start", 1)
 	_ArrayTranspose($inputs)
 	_ArrayTranspose($targets)
-	Local $hidden_inputs = _Matrix_Product($wih, $inputs)
+	Local $hidden_inputs = _myMath_MatrixProduct($wih, $inputs)
 	Local $hidden_outputs =  _activation_SigmoidMatrix($hidden_inputs)
-	Local $final_inputs = _Matrix_Product($who, $hidden_outputs)
+	Local $final_inputs = _myMath_MatrixProduct($who, $hidden_outputs)
 	Local $final_outputs = _activation_SigmoidMatrix($final_inputs)
-	Local $output_errors = _Matrix_element_Sub($targets, $final_outputs)
+	Local $output_errors = _myMath_MatrixSub($targets, $final_outputs)
 	Local $temp_who = $who
 	_ArrayTranspose($who)
-	Local $hidden_errors =  _Matrix_Product($who, $output_errors)
+	Local $hidden_errors =  _myMath_MatrixProduct($who, $output_errors)
 
 	$WHO =  $temp_who
 	Local $temp = _updateLinks($who, $output_errors, $final_outputs, $hidden_outputs)
 
-	$WHO = _Matrix_element_Sum($temp, $who)
+	$WHO = _myMath_MatrixSum($temp, $who)
 	Local $temp2 = _updateLinks($wih, $hidden_errors, $hidden_outputs, $inputs)
-	$WIH = _Matrix_element_Sum($temp2, $wih)
+	$WIH = _myMath_MatrixSum($temp2, $wih)
 	my_Debug("Train - Stop", -1)
 EndFunc
 
@@ -240,8 +253,8 @@ Func _trainNetwork()
 
 	;Циклично извлекает из целевого и входного массива по 1й строке за раз и осуществляет 1 подход обучения с использованием этих данных.
 	Local $curTarget, $curInputs
-	For $i = 0 To UBound($aTargets, 1) -1 Step 1
-;~ 	For $i = 0 To 1 -1 Step 1
+;~ 	For $i = 0 To UBound($aTargets, 1) -1 Step 1
+	For $i = 0 To 1 -1 Step 1
 		my_Debug("Учу " & $i)
 		$curTarget = _ArrayExtract($aTargets, $i, $i)
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
@@ -256,9 +269,9 @@ Func Query($inputs)
 	
 	#ce
 	_ArrayTranspose($inputs)
-	Local $hidden_inputs = _Matrix_Product($wih, $inputs)
+	Local $hidden_inputs = _myMath_MatrixProduct($wih, $inputs)
 	Local $hidden_outputs =  _activation_SigmoidMatrix($hidden_inputs)
-	Local $final_inputs = _Matrix_Product($who, $hidden_outputs)
+	Local $final_inputs = _myMath_MatrixProduct($who, $hidden_outputs)
 	Local $final_outputs = _activation_SigmoidMatrix($final_inputs)
 	Return $final_outputs
 EndFunc
