@@ -52,3 +52,37 @@ Func __myFile_FileReadToArray($sFileName, $sDelimiter = ",", $bShuffle = True)
 	my_Debug("__myFile_FileReadToArray - Stop", -1)
 	Return $afArray
 EndFunc
+
+Func _loadNetwork()
+	#cs - Загружает из файла нейросеть, выгруженную туда ранее командой _saveNetwork
+		Помещает в глобальную область массивы wih и who с уже инициализированной нейросетью которую можно тут же применять в деле или же продолжать обучать
+	#ce
+	my_Debug("_loadNetwork - Start", 1)
+	my_Debug("Загружаю файл" & @ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
+	Local $sWih = FileRead(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
+	Local $aRows = StringSplit($sWih, "@", 2)
+	Local $aCols = StringSplit($aRows[0], "|", 2)
+	my_Debug("Размер массива из файла: [" &UBound($aRows, 1)& "][" &UBound($aCols, 1)& "]")
+;~ 	Global $__g_afWIH[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($__g_afWIH, 1) -1 Step 1
+		Local $tempRow = StringSplit($aRows[$row], "|", 2)
+		For $col = 0 To UBound($__g_afWIH, 2) -1 Step 1
+			$__g_afWIH[$row][$col] = $tempRow[$col]
+		Next
+	Next
+	_DebugArrayDisplay($__g_afWIH)
+	my_Debug("Загружаю файл" & @ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
+	Local $sWho = FileRead(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
+	Local $aRows = StringSplit($sWho, "@", 2)
+	Local $aCols = StringSplit($aRows[0], "|", 2)
+	my_Debug("Размер массива из файла: [" &UBound($aRows, 1)& "][" &UBound($aCols, 1)& "]")
+;~ 	Global $__g_afWHO[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($__g_afWHO, 1) -1 Step 1
+		Local $tempRow = StringSplit($aRows[$row], "|", 2)
+		For $col = 0 To UBound($__g_afWHO, 2) -1 Step 1
+			$__g_afWHO[$row][$col] = $tempRow[$col]
+		Next
+	Next
+	_DebugArrayDisplay($__g_afWHO)
+	my_Debug("_loadNetwork - Stop", -1)
+EndFunc
