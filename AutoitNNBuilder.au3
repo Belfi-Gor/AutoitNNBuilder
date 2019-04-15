@@ -6,7 +6,7 @@
 #include "Include\myDebug.au3"
 #include "Include\myFile.au3"
 #include "Include\myMath.au3"
-;~ #include "temp_area.au3"
+#include "area_51.au3"
 
 #cs Описание проекта
 	Спецификации используемые при разработке кода:
@@ -34,7 +34,9 @@
 #ce
 Opt("MustDeclareVars", 1)
 Global $networkName = "MNIST_test_100"
-
+Global $__g_afWHO = False 
+Global $__g_afWIH = False 
+Global $__g_fLR = False
 
 _DebugSetup(@ScriptName, True,2)
 _DebugOut("Запуск " & @ScriptName)
@@ -47,42 +49,38 @@ _testNetwork()
 
 Exit 
 
-Func Init($input_nodes, $hidden_nodes, $output_nodes, $learning_rate)
+Func Init($iInputNodes, $iHiddenNodes, $iOutputNodes, $fLearningRate)
 	#cs Инициализирует трехслойную нейронную сеть.
 		Принимает на вход:
-			$input_nodes - Количество нейронов первого слоя
-			$hidden_nodes - Количество нейронов скрытого слоя
-			$output_nodes - Количество нейронов выходного слоя
-			$learning_rate - Коэффициент обучения	
+			$iInputNodes - Количество нейронов первого слоя
+			$iHiddenNodes - Количество нейронов скрытого слоя
+			$iOutputNodes - Количество нейронов выходного слоя
+			$fLearningRate - Коэффициент обучения	
 	#ce
 	my_Debug("Init - Start", 1)
 	my_Debug("На вход получены значения: ", 1)
-	my_Debug("$input_nodes = " & $input_nodes)
-	my_Debug("$hidden_nodes = " & $hidden_nodes)
-	my_Debug("$output_nodes = " & $output_nodes)
-	my_Debug("$learning_rate = " & $learning_rate)
+	my_Debug("$iInputNodes = " & $iInputNodes)
+	my_Debug("$iHiddenNodes = " & $iHiddenNodes)
+	my_Debug("$iOutputNodes = " & $iOutputNodes)
+	my_Debug("$fLearningRate = " & $fLearningRate)
 	my_Debug("Создаю массивы связей", -1)
 	;Создаем массивы с весами связей нейронов
 	
 	;WHO - Weights Hidden Layer to Output Layer - Веса связей между скрытым слоем и выходным
-	Global $WHO = __myArray_Create2DWithRandomFill($output_nodes, $hidden_nodes,  True) ;Создаем массив заполненный случайными числами
+	$__g_afWHO = __myArray_Create2DWithRandomFill($iOutputNodes, $iHiddenNodes,  True) ;Создаем массив заполненный случайными числами
 	If @error Then 
 		my_Debug("Ошибка инициализации WHO: [" & @error & "]")
 		Exit 
 	EndIf
 	
 	;WIH - Weights Input Layer to Hidden Layer - Веса связей между входным слоем и скрытым
-	Global $WIH = __myArray_Create2DWithRandomFill($hidden_nodes, $input_nodes,  True) ;Создаем массив заполненный случайными числами
+	$__g_afWIH = __myArray_Create2DWithRandomFill($iHiddenNodes, $iInputNodes,  True) ;Создаем массив заполненный случайными числами
 	If @error Then 
 		my_Debug("Ошибка инициализации WIH: [" & @error & "]")
 		Exit 
 	EndIf
-	
-	;Обозначяем ключевые параметры в глобальных переменных
-	Global $LR = $learning_rate
-;~ 	Global Const $I_NODES = $input_nodes
-;~ 	Global Const $H_NODES = $hidden_nodes
-;~ 	Global Const $O_NODES = $output_nodes
+
+	$__g_fLR = $fLearningRate
 	my_Debug("Init - End", -1)
 EndFunc
 
@@ -188,7 +186,7 @@ EndFunc
 Func _updateLinks($cur_level, $cur_errors, $cur_outputs, $prev_outputs)
 	#cs - Обновляет связи между нейронами двух слоёв.
 		Принимает на вход:
-			$cur_level - переменная в которую пишется ссылка на $wih или $who чьи связи надо обновить
+			$cur_level - переменная в которую пишется ссылка на $__g_afWIH или $__g_afWHO чьи связи надо обновить
 			Возможно имена $cur_outpiuts и $prev_outputs не верно отражают суть. Оставим так до времен ремастеринга.
 	
 	#ce
@@ -204,7 +202,7 @@ Func _updateLinks($cur_level, $cur_errors, $cur_outputs, $prev_outputs)
 	Local $uL_step3 =  _myMath_MatrixMul($uL_step2, $cur_errors)
 	_ArrayTranspose($prev_outputs)
 	Local $uL_step4 =  _myMath_MatrixProduct($uL_step3, $prev_outputs)
-	Local $uL_step5 =  _myMath_MatrixApplyLR($uL_step4, $lr)
+	Local $uL_step5 =  _myMath_MatrixApplyLR($uL_step4, $__g_fLR)
 	Return $uL_step5
 EndFunc
 
@@ -220,21 +218,21 @@ Func Train($inputs, $targets)
 	my_Debug("Train - Start", 1)
 	_ArrayTranspose($inputs)
 	_ArrayTranspose($targets)
-	Local $hidden_inputs = _myMath_MatrixProduct($wih, $inputs)
+	Local $hidden_inputs = _myMath_MatrixProduct($__g_afWIH, $inputs)
 	Local $hidden_outputs =  _activation_SigmoidMatrix($hidden_inputs)
-	Local $final_inputs = _myMath_MatrixProduct($who, $hidden_outputs)
+	Local $final_inputs = _myMath_MatrixProduct($__g_afWHO, $hidden_outputs)
 	Local $final_outputs = _activation_SigmoidMatrix($final_inputs)
 	Local $output_errors = _myMath_MatrixSub($targets, $final_outputs)
-	Local $temp_who = $who
-	_ArrayTranspose($who)
-	Local $hidden_errors =  _myMath_MatrixProduct($who, $output_errors)
+	Local $temp_who = $__g_afWHO
+	_ArrayTranspose($__g_afWHO)
+	Local $hidden_errors =  _myMath_MatrixProduct($__g_afWHO, $output_errors)
 
-	$WHO =  $temp_who
-	Local $temp = _updateLinks($who, $output_errors, $final_outputs, $hidden_outputs)
+	$__g_afWHO =  $temp_who
+	Local $temp = _updateLinks($__g_afWHO, $output_errors, $final_outputs, $hidden_outputs)
 
-	$WHO = _myMath_MatrixSum($temp, $who)
-	Local $temp2 = _updateLinks($wih, $hidden_errors, $hidden_outputs, $inputs)
-	$WIH = _myMath_MatrixSum($temp2, $wih)
+	$__g_afWHO = _myMath_MatrixSum($temp, $__g_afWHO)
+	Local $temp2 = _updateLinks($__g_afWIH, $hidden_errors, $hidden_outputs, $inputs)
+	$__g_afWIH = _myMath_MatrixSum($temp2, $__g_afWIH)
 	my_Debug("Train - Stop", -1)
 EndFunc
 
@@ -254,8 +252,8 @@ Func _trainNetwork()
 
 	;Циклично извлекает из целевого и входного массива по 1й строке за раз и осуществляет 1 подход обучения с использованием этих данных.
 	Local $curTarget, $curInputs
-	For $i = 0 To UBound($aTargets, 1) -1 Step 1
-;~ 	For $i = 0 To 1 -1 Step 1
+;~ 	For $i = 0 To UBound($aTargets, 1) -1 Step 1
+	For $i = 0 To 1 -1 Step 1
 		my_Debug("Учу " & $i)
 		$curTarget = _ArrayExtract($aTargets, $i, $i)
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
@@ -270,9 +268,9 @@ Func Query($inputs)
 	
 	#ce
 	_ArrayTranspose($inputs)
-	Local $hidden_inputs = _myMath_MatrixProduct($wih, $inputs)
+	Local $hidden_inputs = _myMath_MatrixProduct($__g_afWIH, $inputs)
 	Local $hidden_outputs =  _activation_SigmoidMatrix($hidden_inputs)
-	Local $final_inputs = _myMath_MatrixProduct($who, $hidden_outputs)
+	Local $final_inputs = _myMath_MatrixProduct($__g_afWHO, $hidden_outputs)
 	Local $final_outputs = _activation_SigmoidMatrix($final_inputs)
 	Return $final_outputs
 EndFunc
@@ -318,8 +316,8 @@ Func _saveNetwork($lastRow)
 			$iLastRow - номер следующей строки датасета с которой нужно будет продолжить обучение
 		Берет из глобальной области:
 			$networkName - Имя текущей обрабатываемой нейронной сети
-			$wih - массив связей входного и скрытого слоёв
-			$who - массив связей скрытого и выходного слоёв
+			$__g_afWIH - массив связей входного и скрытого слоёв
+			$__g_afWHO - массив связей скрытого и выходного слоёв
 		Создает в отдельной папке с именем нейросети файлы wih.txt, who.txt и settings.ini
 	#ce
     FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - settings.ini", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
@@ -327,12 +325,12 @@ Func _saveNetwork($lastRow)
 
 	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
 	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
-	Local $sWih = _ArrayToString($wih, "|", -1, -1, "@")
+	Local $sWih = _ArrayToString($__g_afWIH, "|", -1, -1, "@")
 	FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", $sWih)
 
 	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
 	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
-	Local $sWho = _ArrayToString($who, "|", -1, -1, "@")
+	Local $sWho = _ArrayToString($__g_afWHO, "|", -1, -1, "@")
     FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", $sWho)
 EndFunc
 
@@ -344,22 +342,22 @@ Func _loadNetwork()
 	Local $aRows = StringSplit($sWih, "@", 2)
 	Local $aCols = StringSplit($aRows[0], "|", 2)
 
-	Global $wih[UBound($aRows, 1)][UBound($aCols, 1)]
-	For $row = 0 To UBound($wih, 1) -1 Step 1
+	Global $__g_afWIH[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($__g_afWIH, 1) -1 Step 1
 		Local $tempRow = StringSplit($aRows[$row], "|", 2)
-		For $col = 0 To UBound($wih, 2) -1 Step 1
-			$wih[$row][$col] = $tempRow[$col]
+		For $col = 0 To UBound($__g_afWIH, 2) -1 Step 1
+			$__g_afWIH[$row][$col] = $tempRow[$col]
 		Next
 	Next
 	Local $sWho = FileRead(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
 	Local $aRows = StringSplit($sWho, "@", 2)
 	Local $aCols = StringSplit($aRows[0], "|", 2)
 
-	Global $who[UBound($aRows, 1)][UBound($aCols, 1)]
-	For $row = 0 To UBound($who, 1) -1 Step 1
+	Global $__g_afWHO[UBound($aRows, 1)][UBound($aCols, 1)]
+	For $row = 0 To UBound($__g_afWHO, 1) -1 Step 1
 		Local $tempRow = StringSplit($aRows[$row], "|", 2)
-		For $col = 0 To UBound($who, 2) -1 Step 1
-			$who[$row][$col] = $tempRow[$col]
+		For $col = 0 To UBound($__g_afWHO, 2) -1 Step 1
+			$__g_afWHO[$row][$col] = $tempRow[$col]
 		Next
 	Next
 EndFunc
