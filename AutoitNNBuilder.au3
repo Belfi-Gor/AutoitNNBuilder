@@ -1,4 +1,3 @@
-#AutoIt3Wrapper_Au3Check_Parameters=-q -d -w 1 -w 2 -w 3 -w- 4 -w 5 -w 6 -w- 7
 #include <Array.au3>
 #include <File.au3>
 #include <WinAPIFiles.au3>
@@ -33,7 +32,7 @@
 		Добавлена возможность сохранять нейросети в файлы и выгружать их из файлов.
 #ce
 Opt("MustDeclareVars", 1)
-Global $networkName = "MNIST_test_15000"
+Global $g_iNeuralNetworkName = "MNIST_test_15000"
 Global $__g_afWHO = False
 Global $__g_afWIH = False
 Global $__g_fLR = False
@@ -44,8 +43,8 @@ my_Debug("Модуль отладки включен")
 ;~ temp_test()
 
 Init(784, 200, 10,  0.3)
-_trainNetwork()
-;~ _loadNetwork()
+;~ _trainNetwork()
+_myFile_LoadNetwork()
 _testNetwork()
 
 Exit
@@ -285,7 +284,7 @@ Func _testNetwork()
 	#ce
 	my_Debug("Получаю тестовые данные MNIST",  "header")
 
-	Local $testsource = __myFile_FileReadToArray(@ScriptDir& "\mnist_test_10.csv")
+	Local $testsource = __myFile_FileReadToArray(@ScriptDir& "\mnist_test_1000.csv")
 	my_Debug("Полученно тестовых записей: " & UBound($testsource))
 	Local $aInputs, $aTargets
 	Local $testing_Data = MNIST_PrepData($aInputs, $aTargets, $testsource)
