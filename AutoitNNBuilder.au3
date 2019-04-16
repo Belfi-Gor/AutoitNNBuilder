@@ -43,8 +43,8 @@ my_Debug("Модуль отладки включен")
 ;~ temp_test()
 
 Init(784, 200, 10,  0.3)
-;~ _trainNetwork()
-_myFile_LoadNetwork()
+_trainNetwork()
+;~ _loadNetwork()
 _testNetwork()
 
 Exit
@@ -259,7 +259,7 @@ Func _trainNetwork()
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
 		Train($curInputs, $curTarget)
 	Next
-	_saveNetwork($i + 1)
+	_myFile_SaveNetwork($i + 1)
 	my_Debug("_trainNetwork - Stop", -1)
 EndFunc
 
@@ -284,7 +284,7 @@ Func _testNetwork()
 	#ce
 	my_Debug("Получаю тестовые данные MNIST",  "header")
 
-	Local $testsource = __myFile_FileReadToArray(@ScriptDir& "\mnist_test_1000.csv")
+	Local $testsource = __myFile_FileReadToArray(@ScriptDir& "\mnist_test_10.csv")
 	my_Debug("Полученно тестовых записей: " & UBound($testsource))
 	Local $aInputs, $aTargets
 	Local $testing_Data = MNIST_PrepData($aInputs, $aTargets, $testsource)
@@ -310,26 +310,3 @@ EndFunc
 
 
 
-Func _saveNetwork($lastRow)
-	#cs - Сохраняет текущий прогресс обучения сети в файлы.
-		На вход принимает:
-			$iLastRow - номер следующей строки датасета с которой нужно будет продолжить обучение
-		Берет из глобальной области:
-			$networkName - Имя текущей обрабатываемой нейронной сети
-			$__g_afWIH - массив связей входного и скрытого слоёв
-			$__g_afWHO - массив связей скрытого и выходного слоёв
-		Создает в отдельной папке с именем нейросети файлы wih.txt, who.txt и settings.ini
-	#ce
-    FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - settings.ini", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
-	IniWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - settings.ini", "startData", "lastRow", $lastRow)
-
-	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
-	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
-	Local $sWih = _ArrayToString($__g_afWIH, "|", -1, -1, "@")
-	FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", $sWih)
-
-	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
-	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
-	Local $sWho = _ArrayToString($__g_afWHO, "|", -1, -1, "@")
-    FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", $sWho)
-EndFunc
