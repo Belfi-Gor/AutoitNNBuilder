@@ -142,7 +142,7 @@ Func _myFile_LoadNetwork($bValidate = False)
 	my_Debug("_myFile_LoadNetwork - Stop", -1)
 EndFunc
 
-Func _saveNetwork($lastRow)
+Func _myFile_SaveNetwork($lastRow)
 	#cs - Сохраняет текущий прогресс обучения сети в файлы.
 		На вход принимает:
 			$iLastRow - номер следующей строки датасета с которой нужно будет продолжить обучение
