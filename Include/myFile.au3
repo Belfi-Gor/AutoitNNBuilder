@@ -53,11 +53,33 @@ Func __myFile_FileReadToArray($sFileName, $sDelimiter = ",", $bShuffle = True)
 	Return $afArray
 EndFunc
 
-Func _loadNetwork($bValidate = False)
-	#cs - Загружает из файла нейросеть, выгруженную туда ранее командой _saveNetwork
-		Помещает в глобальную область массивы wih и who с уже инициализированной нейросетью которую можно тут же применять в деле или же продолжать обучать
-	#ce
-	my_Debug("_loadNetwork - Start", 1)
+; #FUNCTION# ====================================================================================================================
+; Name...........: 	_myFile_LoadNetwork
+; Description ...: 	Считывает нейросеть из папки нейросети, ранее выгруженную в файлы командой _saveNetwork и заносит полученную
+;					нейросеть, в переменные используемые для хранения нейросети. 
+; Syntax.........: 	_myFile_LoadNetwork([$bValidate = False])
+; Parameters ....:	$bValidate - Триггер валидации глобальных данных используемых для работы
+; Return values .: 	Success			- Заполняет массивы содержащие нейросеть рабочими данными загруженной из файла нейросети
+;					Failure			- Возвращает False и устанавливает @error в значение:
+;									|1 - Не найден файл wih.txt
+;									|2 - Не найден файл who.txt
+;									|3 - Ошибка команды FileRead при чтении wih.txt
+;									----| Устанавливает в @extended значение @error команды FileRead
+;									|4 - Количество строк wih.txt не соотвутствует количеству строк инициализированной сети
+;									|5 - Количество столбцов wih.txt не соотвутствует количеству стобцов инициализированной сети
+;									|6 - Ошибка команды FileRead при чтении who.txt
+;									----| Устанавливает в @extended значение @error команды FileRead
+;									|7 - Количество строк wih.txt не соотвутствует количеству строк инициализированной сети
+;									|8 - Количество столбцов wih.txt не соотвутствует количеству стобцов инициализированной сети
+; Author ........:	Belfigor
+; Modified.......: 	
+; Remarks .......: 	
+; Related .......: 	
+; Link ..........: 	
+; Example .......: 	No
+; ===============================================================================================================================
+Func _myFile_LoadNetwork($bValidate = False)
+	my_Debug("_myFile_LoadNetwork - Start", 1)
 
 	Local $sRowsDelimiter = "@"
 	Local $sColsDelimiter = "|"
@@ -80,7 +102,7 @@ Func _loadNetwork($bValidate = False)
 	my_Debug("Загружаю файл" & $sPathWIH)
 	;Считываем файл в переменную $sWih. В случае успеха мы получим одну сплошную строку, где строки массива будут 
 	;отделены друг от друга знаком "@", а элементы внутри строк массива будут разделены знаком "|"
-	$sWih = FileRead($sPathWIH)
+	$sWih = FileRead($sPathWIH) ;Считываем файл в переменную $sWih
 	If @error Then Return SetError(3, @error, False) ;Возвращаем False и @error = FileRead @error, если функция FileRead сгенерировала ошибку
 	
 	$asRows = StringSplit($sWih, $sRowsDelimiter, 2) ;Разбиваем массив на строки
@@ -99,7 +121,7 @@ Func _loadNetwork($bValidate = False)
 	Next
 
 	my_Debug("Загружаю файл" & $sPathWHO)
-	$sWho = FileRead($sPathWHO)
+	$sWho = FileRead($sPathWHO) ;Считываем в переменную $sWho файл
 	If @error Then Return SetError(6, @error, False) ;Возвращаем False и @error = FileRead @error, если функция FileRead сгенерировала ошибку
 	
 	$asRows = StringSplit($sWho, $sRowsDelimiter, 2) ;Разбиваем массив на строки
@@ -117,5 +139,5 @@ Func _loadNetwork($bValidate = False)
 		Next
 	Next
 
-	my_Debug("_loadNetwork - Stop", -1)
+	my_Debug("_myFile_LoadNetwork - Stop", -1)
 EndFunc
