@@ -6,6 +6,7 @@
 #include "Include\myFile.au3"
 #include "Include\myMath.au3"
 #include "area_51.au3"
+#include "Include\myPerformance.au3"
 
 #cs Описание проекта
 	Спецификации используемые при разработке кода:
@@ -42,6 +43,10 @@ Global $g_iNeuralNetworkName = "MNIST_test_15000"
 Global $__g_afWHO = False
 Global $__g_afWIH = False
 Global $__g_fLR = False
+Global $__g_myPerf_1TrainLength[0]
+Global $__g_myPerf_1ActivationLength[0]
+
+OnAutoItExitRegister ("_myPerf_UnloadCounters")
 
 _DebugSetup(@ScriptName, True,2)
 _DebugOut("Запуск " & @ScriptName)
@@ -49,10 +54,11 @@ my_Debug("Модуль отладки включен")
 ;~ temp_test()
 
 Init(784, 200, 10,  0.3)
-_trainNetwork()
+_trainNetwork(@ScriptDir&"\mnist_train_100.csv")
+_myPerf_UnloadCounters()
 ;~ _loadNetwork()
-_testNetwork()
-
+_testNetwork(@ScriptDir& "\mnist_test_10.csv")
+_myPerf_UnloadCounters()
 Exit
 
 Func Init($iInputNodes, $iHiddenNodes, $iOutputNodes, $fLearningRate)
@@ -242,13 +248,13 @@ Func Train($inputs, $targets)
 	my_Debug("Train - Stop", -1)
 EndFunc
 
-Func _trainNetwork()
+Func _trainNetwork($sPath)
 	my_Debug("_trainNetwork - Start", 1)
 	#cs Инициализирует однократное обучение нейросети по датасету (эпоху)
 
 	#ce
 	;Загружаем тренировочные данные
-	Local $trainsource = __myFile_FileReadToArray(@ScriptDir&"\mnist_train_15000.csv") ;загружаем учебную подборку
+	Local $trainsource = __myFile_FileReadToArray($sPath) ;загружаем учебную подборку
 
 
 	;Подготавливаем полученный массив, формируя массивы целевых и входных данных
@@ -257,13 +263,15 @@ Func _trainNetwork()
 	If @error Then MsgBox(0, @error, @extended)
 
 	;Циклично извлекает из целевого и входного массива по 1й строке за раз и осуществляет 1 подход обучения с использованием этих данных.
-	Local $curTarget, $curInputs
+	Local $curTarget, $curInputs, $h1TrainLength_Timer
 	For $i = 0 To UBound($aTargets, 1) -1 Step 1
 ;~ 	For $i = 0 To 1 -1 Step 1
 		my_Debug("Учу " & $i)
 		$curTarget = _ArrayExtract($aTargets, $i, $i)
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
+		$h1TrainLength_Timer = TimerInit()
 		Train($curInputs, $curTarget)
+		_myPerf_UpdateCounter("__g_myPerf_1TrainLength", TimerDiff($h1TrainLength_Timer))
 	Next
 	_myFile_SaveNetwork($i + 1)
 	my_Debug("_trainNetwork - Stop", -1)
@@ -281,7 +289,7 @@ Func Query($inputs)
 	Return $final_outputs
 EndFunc
 
-Func _testNetwork()
+Func _testNetwork($sPath)
 	#cs Производит тестирование нейросети по тестовому датасету
 			Сопоставляет ожидаемые значения с фактическими
 			Тестовый датасет - это набор данных полностью идентичных учебному, но данные тестового датасета не присутствуют в учебном
@@ -290,7 +298,7 @@ Func _testNetwork()
 	#ce
 	my_Debug("Получаю тестовые данные MNIST",  "header")
 
-	Local $testsource = __myFile_FileReadToArray(@ScriptDir& "\mnist_test_10.csv")
+	Local $testsource = __myFile_FileReadToArray($sPath)
 	my_Debug("Полученно тестовых записей: " & UBound($testsource))
 	Local $aInputs, $aTargets
 	Local $testing_Data = MNIST_PrepData($aInputs, $aTargets, $testsource)
@@ -298,13 +306,15 @@ Func _testNetwork()
 	Local $success = 0
 	Local $curTarget
 	Local $curInputs
+	Local $h1ActivationLength_Timer
 	For $i = 0 To UBound($aTargets) -1 Step 1
 		$counter += 1
 		$curTarget = _ArrayExtract($aTargets, $i, $i)
 		_ArrayTranspose($curTarget)
 		$curInputs = _ArrayExtract($aInputs, $i, $i)
-
+		$h1ActivationLength_Timer =  TimerInit()
 		Local $var =  Query($curInputs)
+		_myPerf_UpdateCounter("__g_myPerf_1ActivationLength", TimerDiff($h1ActivationLength_Timer))
 		If _ArrayMaxIndex($curTarget) = _ArrayMaxIndex($var) Then
 			my_Debug($i& "	Статистика:" & Round($success / $counter, 2) * 100 & "%	Совпадение:" & _ArrayMaxIndex($var)&"=="&_ArrayMaxIndex($curTarget))
 			$success += 1

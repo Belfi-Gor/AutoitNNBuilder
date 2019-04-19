@@ -147,21 +147,21 @@ Func _myFile_SaveNetwork($lastRow)
 		На вход принимает:
 			$iLastRow - номер следующей строки датасета с которой нужно будет продолжить обучение
 		Берет из глобальной области:
-			$networkName - Имя текущей обрабатываемой нейронной сети
+			$g_iNeuralNetworkName - Имя текущей обрабатываемой нейронной сети
 			$__g_afWIH - массив связей входного и скрытого слоёв
 			$__g_afWHO - массив связей скрытого и выходного слоёв
 		Создает в отдельной папке с именем нейросети файлы wih.txt, who.txt и settings.ini
 	#ce
-    FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - settings.ini", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
-	IniWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - settings.ini", "startData", "lastRow", $lastRow)
+    FileCopy(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - settings.ini", @ScriptDir&"\"&$g_iNeuralNetworkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
+	IniWrite(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - settings.ini", "startData", "lastRow", $lastRow)
 
-	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
-	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt")
+	FileCopy(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - wih.txt", @ScriptDir&"\"&$g_iNeuralNetworkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
+	FileDelete(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - wih.txt")
 	Local $sWih = _ArrayToString($__g_afWIH, "|", -1, -1, "@")
-	FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - wih.txt", $sWih)
+	FileWrite(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - wih.txt", $sWih)
 
-	FileCopy(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", @ScriptDir&"\"&$networkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
-	FileDelete(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt")
+	FileCopy(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - who.txt", @ScriptDir&"\"&$g_iNeuralNetworkName&"\bkp\", $FC_OVERWRITE + $FC_CREATEPATH)
+	FileDelete(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - who.txt")
 	Local $sWho = _ArrayToString($__g_afWHO, "|", -1, -1, "@")
-    FileWrite(@ScriptDir&"\"&$networkName&"\"&$networkName&" - who.txt", $sWho)
+    FileWrite(@ScriptDir&"\"&$g_iNeuralNetworkName&"\"&$g_iNeuralNetworkName&" - who.txt", $sWho)
 EndFunc
