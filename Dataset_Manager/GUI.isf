@@ -1,0 +1,109 @@
+; -- Created with ISN Form Studio 2 for ISN AutoIt Studio -- ;
+#include <StaticConstants.au3>
+#include <GUIConstantsEx.au3>
+#include <WindowsConstants.au3>
+#Include <GuiButton.au3>
+
+Global $hGUI = GUICreate("GUI",350,254,-1,-1,$WS_SIZEBOX,-1)
+Global $idButton_redraw = GUICtrlCreateButton("redraw",0,0,47,20,-1,-1)
+GUICtrlSetOnEvent(-1,"_redraw_graph")
+Global $idGraphic_graph = GUICtrlCreateGraphic(0,0,350,254,-1)
+GUICtrlSetBkColor(-1,"0xFFFFFF")
+GUICtrlSetResizing(-1,802)
+
+
+
+#cs
+[gui]
+Handle_deklaration=global
+Handle_deklaration_const=false
+title=GUI
+breite=350
+hoehe=254
+style=$WS_SIZEBOX
+exstyle=-1
+bgcolour=0xF0F0F0
+bgimage=none
+handle=$hGUI
+parent=
+code=
+codebeforegui=
+xpos=-1
+ypos=-1
+center_gui=true
+title_textmode=normal
+isf_include_once=false
+only_controls_in_isf=false
+const_modus=default
+gui_code_in_function=false
+gui_code_in_function_name=
+gui_event_close=
+gui_event_minimize=
+gui_event_restore=
+gui_event_maximize=
+gui_event_mousemove=
+gui_event_primarydown=
+gui_event_primaryup=
+gui_event_secoundarydown=
+gui_event_secoundaryup=
+gui_event_resized=
+gui_event_dropped=
+[0x000D1D9A]
+handle=375
+locked=0
+resize=802
+code=
+type=graphic
+x=0
+y=0
+width=350
+height=254
+text=
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=0xFFFFFF
+font=MS Sans Serif
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idGraphic_graph
+func=
+bgimage=
+order=1
+tabpage=-1
+iconindex=
+textmode=text
+[tab]
+code=; -- Created with ISN Form Studio 2 for ISN AutoIt Studio -- ;[BREAK]#include <StaticConstants.au3>[BREAK]#include <GUIConstantsEx.au3>[BREAK]#include <WindowsConstants.au3>[BREAK]#Include <GuiButton.au3>[BREAK][BREAK]Global $GUI = GUICreate("GUI",350,350,-1,-1,-1,-1)[BREAK]GUICtrlCreateGraphic(0,0,350,351,-1)[BREAK]GUICtrlSetResizing(-1,802)[BREAK]
+[0x000D3B7E]
+handle=384
+locked=0
+resize=
+code=
+type=button
+x=0
+y=0
+width=47
+height=20
+text=redraw
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=
+font=MS Sans Serif
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idButton_redraw
+func=_redraw_graph
+bgimage=
+order=0
+tabpage=-1
+iconindex=
+textmode=text
+#ce
