@@ -7,12 +7,17 @@ Func _myPerf_UpdateCounter($sCounterName, $fData)
 		Case "__g_myPerf_1ActivationLength"
 			_ArrayAdd($__g_myPerf_1ActivationLength, Round($fData, 2))
 ;~ 			_ArrayDisplay($__g_myPerf_1ActivationLength)
+		Case "__NNTestResults"
+			_ArrayAdd($__NNTestResults, $fData)
+;~ 			_ArrayDisplay($__NNTestResults)
+			_myPerf_UnloadCounters()
 		Case Else 
 			Return SetError(2, 0, False)
 	EndSwitch
 EndFunc
 
 Func _myPerf_UnloadCounters()
-	_FileWriteFromArray("__g_myPerf_1TrainLength.txt", $__g_myPerf_1TrainLength)
-	_FileWriteFromArray("__g_myPerf_1ActivationLength.txt", $__g_myPerf_1ActivationLength)
+;~ 	_FileWriteFromArray("__g_myPerf_1TrainLength.txt", $__g_myPerf_1TrainLength)
+;~ 	_FileWriteFromArray("__g_myPerf_1ActivationLength.txt", $__g_myPerf_1ActivationLength)
+	_FileWriteFromArray($g_iNeuralNetworkName&"__NNTestResults.txt", $__NNTestResults)
 EndFunc
