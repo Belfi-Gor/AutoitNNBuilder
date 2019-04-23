@@ -39,13 +39,13 @@
 		Добавлена возможность загрузки нейросети из файла
 #ce
 Opt("MustDeclareVars", 1)
-Global $g_iNeuralNetworkName = "MNIST_test_15000"
+Global $g_iNeuralNetworkName = "MNIST_test_15000_LR0.1"
 Global $__g_afWHO = False
 Global $__g_afWIH = False
 Global $__g_fLR = False
 Global $__g_myPerf_1TrainLength[0]
 Global $__g_myPerf_1ActivationLength[0]
-
+Global $__NNTestResults[0]
 OnAutoItExitRegister ("_myPerf_UnloadCounters")
 
 _DebugSetup(@ScriptName, True,2)
@@ -53,12 +53,14 @@ _DebugOut("Запуск " & @ScriptName)
 my_Debug("Модуль отладки включен")
 ;~ temp_test()
 
-Init(784, 200, 10,  0.3)
-_trainNetwork(@ScriptDir&"\mnist_train_100.csv")
-_myPerf_UnloadCounters()
+Init(784, 200, 10,  0.1)
+;~ _trainNetwork(@ScriptDir&"\mnist_train_15000.csv")
+;~ _trainAndTest_Network(@ScriptDir&"\mnist_train_15000.csv", @ScriptDir& "\mnist_test_1000.csv")
+_testBeforeTrainNetwork(@ScriptDir&"\mnist_train_15000.csv", @ScriptDir& "\mnist_test_1000.csv")
+;~ _myPerf_UnloadCounters()
 ;~ _loadNetwork()
-_testNetwork(@ScriptDir& "\mnist_test_10.csv")
-_myPerf_UnloadCounters()
+;~ _testNetwork(@ScriptDir& "\mnist_test_10.csv")
+;~ _myPerf_UnloadCounters()
 Exit
 
 Func Init($iInputNodes, $iHiddenNodes, $iOutputNodes, $fLearningRate)
@@ -168,6 +170,7 @@ Func MNIST_PrepData(ByRef $ref_aInputs, ByRef $ref_aTargets, $aArray)
 	Next
 	;После масштабирования в массиве $aArray будут храниться значения от 0.01 до 0.99
 	$ref_aInputs = $aArray
+	my_Debug("PrepData - End", -1)
 EndFunc
 
 func _activation_Sigmoid($x)
@@ -281,6 +284,7 @@ Func Query($inputs)
 	#cs Подает инпуты на вход нейросети и получает результат на выходе
 
 	#ce
+;~ 	_ArrayDisplay($inputs)
 	_ArrayTranspose($inputs)
 	Local $hidden_inputs = _myMath_MatrixProduct($__g_afWIH, $inputs)
 	Local $hidden_outputs =  _activation_SigmoidMatrix($hidden_inputs)
@@ -324,5 +328,96 @@ Func _testNetwork($sPath)
 	Next
 EndFunc
 
+Func _trainAndTest_Network($sPathTrain, $sPathTest)
+	Local $aTrainsSource = __myFile_FileReadToArray($sPathTrain) ;загружаем учебную подборку
+	Local $aInputs, $aTargets
+	MNIST_PrepData($aInputs, $aTargets, $aTrainsSource) ;подготавливаем учебные данные перед передачей их в нейросеть
+	If @error Then MsgBox(0, @error, @extended)
+	Local $curTarget, $curInputs
+	For $i = 0 To UBound($aTargets, 1) -1 Step 1
+		my_Debug("Учу " & $i)
+		$curTarget = _ArrayExtract($aTargets, $i, $i)
+		$curInputs = _ArrayExtract($aInputs, $i, $i)
+		Train($curInputs, $curTarget) ;Производим обучение сети текущей парой
+		_myPerf_UpdateCounter("__NNTestResults", _testInTraining($sPathTest))
+	Next
+EndFunc
 
 
+Func _testInTraining($sPath)
+	#cs Производит тестирование нейросети по тестовому датасету
+			Сопоставляет ожидаемые значения с фактическими
+			Тестовый датасет - это набор данных полностью идентичных учебному, но данные тестового датасета не присутствуют в учебном
+				чтобы сеть не подстроилась для работы исключительно с этими записями.
+
+	#ce
+	my_Debug("Получаю тестовые данные MNIST",  "header")
+
+	Local $testsource = __myFile_FileReadToArray($sPath)
+	my_Debug("Полученно тестовых записей: " & UBound($testsource))
+	Local $aInputs, $aTargets
+	Local $testing_Data = MNIST_PrepData($aInputs, $aTargets, $testsource)
+	$testsource = 0
+	Local $counter = 0
+	Local $success = 0
+	Local $curTarget
+	Local $curInputs
+	Local $h1ActivationLength_Timer
+	For $i = 0 To 100 -1 Step 1
+		$counter += 1
+		$curTarget = _ArrayExtract($aTargets, $i, $i)
+		_ArrayTranspose($curTarget)
+		$curInputs = _ArrayExtract($aInputs, $i, $i)
+		$h1ActivationLength_Timer =  TimerInit()
+		Local $var =  Query($curInputs)
+		_myPerf_UpdateCounter("__g_myPerf_1ActivationLength", TimerDiff($h1ActivationLength_Timer))
+		If _ArrayMaxIndex($curTarget) = _ArrayMaxIndex($var) Then
+			my_Debug($i& "	Статистика:" & Round($success / $counter, 2) * 100 & "%	Совпадение:" & _ArrayMaxIndex($var)&"=="&_ArrayMaxIndex($curTarget))
+			$success += 1
+		Else
+			my_Debug($i& "	Статистика:" & Round($success / $counter, 2) * 100 & "%	Неудача:" & _ArrayMaxIndex($var)&"<>"&_ArrayMaxIndex($curTarget))
+		EndIf
+	Next
+	$testing_Data = 0
+	Return Round($success / $counter, 2) * 100
+EndFunc
+
+Func _testBeforeTrainNetwork($sPathTrain, $sPathTest)
+	Local $aTrainsSource = __myFile_FileReadToArray($sPathTrain) ;загружаем учебную подборку
+	Local $aInputs, $aTargets
+	Local $counter = 0
+	Local $success = 0
+	Local $h1ActivationLength_Timer
+	MNIST_PrepData($aInputs, $aTargets, $aTrainsSource) ;подготавливаем учебные данные перед передачей их в нейросеть
+	If @error Then MsgBox(0, @error, @extended)
+	Local $curTarget, $curInputs
+	Local $avg_100[100]
+	For $i = 0 To UBound($aTargets, 1) -1 Step 1
+;~ 		MsgBox(0, UBound($aTargets, 1), $i)
+		$counter += 1
+		my_Debug("Учу " & $i)
+		$curTarget = _ArrayExtract($aTargets, $i, $i)
+		
+		$curInputs = _ArrayExtract($aInputs, $i, $i)
+		Local $var =  Query($curInputs)
+		Train($curInputs, $curTarget) ;Производим обучение сети текущей парой
+		
+		_ArrayTranspose($curTarget)
+		_myPerf_UpdateCounter("__g_myPerf_1ActivationLength", TimerDiff($h1ActivationLength_Timer))
+		If _ArrayMaxIndex($curTarget) = _ArrayMaxIndex($var) Then
+			_ArrayPush($avg_100, 1)
+			$success += 1
+		Else
+			_ArrayPush($avg_100, 0)
+		EndIf
+		my_Debug("Закодировано в изображении:" & _ArrayMaxIndex($curTarget) & " нейросеть распознала: " & _ArrayMaxIndex($var))
+		Local $cur_avg100 = 0
+		For $z = 0 To UBound($avg_100) -1 Step 1
+			$cur_avg100 += $avg_100[$z]
+;~ 			my_Debug($cur_avg100)
+		Next
+		my_Debug($i& "	Статистика:" & Round($cur_avg100 / UBound($avg_100), 2) * 100)
+		_myPerf_UpdateCounter("__NNTestResults", Round($cur_avg100 / UBound($avg_100), 2) * 100)
+;~ 		MsgBox(0, 0, 0)
+	Next
+EndFunc
