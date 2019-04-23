@@ -26,7 +26,7 @@ Func SpecialEvents()
 
     EndSelect
 EndFunc   ;==>SpecialEvents
-;
+
 Func _redraw_graph()
 	Local $var
 	_FileReadToArray("..\MNIST_test_15000_LR0.1__NNTestResults.txt",  $var)
@@ -93,3 +93,29 @@ Func _redraw_graph()
 	GUICtrlSetGraphic($idGraphic_graph, $GUI_GR_REFRESH) ;Обновляем график
 EndFunc
 
+
+Func rescan()
+	
+	Local $hSearch = FileFindFirstFile("..\*.perf")
+
+    ; Check if the search was successful, if not display a message and return False.
+    If $hSearch = -1 Then
+        MsgBox($MB_SYSTEMMODAL, "", "Error: No files/directories matched the search pattern.")
+        Return False
+    EndIf
+
+    ; Assign a Local variable the empty string which will contain the files names found.
+    Local $sFileName = "", $iResult = 0
+	
+    While 1
+        $sFileName = FileFindNextFile($hSearch)
+        ; If there is no more file matching the search.
+        If @error Then ExitLoop
+
+        ; Display the file name.
+		GUICtrlCreateListViewItem($sFileName, $idListview_Files)
+    WEnd
+
+    ; Close the search handle.
+    FileClose($hSearch)
+EndFunc 
