@@ -19,5 +19,5 @@ EndFunc
 Func _myPerf_UnloadCounters()
 ;~ 	_FileWriteFromArray("__g_myPerf_1TrainLength.txt", $__g_myPerf_1TrainLength)
 ;~ 	_FileWriteFromArray("__g_myPerf_1ActivationLength.txt", $__g_myPerf_1ActivationLength)
-	_FileWriteFromArray($g_iNeuralNetworkName&"__NNTestResults.txt", $__NNTestResults)
+	_FileWriteFromArray($g_iNeuralNetworkName&"__NNTestResults.perf", $__NNTestResults)
 EndFunc
