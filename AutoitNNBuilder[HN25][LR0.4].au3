@@ -40,7 +40,7 @@
 #ce
 Opt("MustDeclareVars", 1)
 Global $tempLR = 0.4
-Global $tempHN = 50
+Global $tempHN = 25
 Global $__g_afWHO = False
 Global $__g_afWIH = False
 Global $__g_fLR = False

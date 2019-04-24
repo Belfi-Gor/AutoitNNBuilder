@@ -4,12 +4,12 @@ Opt("GUIOnEventMode", 1)
 #include <File.au3>
 #include <GuiImageList.au3>
 
-#include "GUI.isf"
+#include "Forms/GUI.isf"
 GUISetOnEvent($GUI_EVENT_CLOSE, "SpecialEvents")
 
 GUISetState(@SW_SHOW)
 
-Global $aColors[7] = [0xff0000, 0x0000FF, 0x000000,  0xEA00FF, 0x007D79, 0x554D96, 0x541F0D]
+Global $aColors[11] = [0xFF1654, 0xFF9F1C, 0x5CA4A9,  0x00A8E8, 0x007EA7, 0x2B2D42, 0xB5838D, 0xE5989B, 0xED6A5A, 0x457B9D, 0x028090]
 
 While 1
 	If GUICtrlRead($idCheckbox_AutoRedraw) = 1 Then 
@@ -96,13 +96,17 @@ EndFunc
 Func rescan()
 	_GUICtrlListView_DeleteAllItems($idListview_Files)
 	Local $hImage = _GUIImageList_Create()
-    _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), 0xFF0000, 16, 16))
+    _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[0], 16, 16))
     _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[1], 16, 16))
     _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[2], 16, 16))
 	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[3], 16, 16))
 	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[4], 16, 16))
 	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[5], 16, 16))
 	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[6], 16, 16))
+	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[7], 16, 16))
+	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[8], 16, 16))
+	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[9], 16, 16))
+	_GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview_Files), $aColors[10], 16, 16))
     _GUICtrlListView_SetImageList($idListview_Files, $hImage, 1)
 
 	Local $hSearch = FileFindFirstFile("..\*.perf")
