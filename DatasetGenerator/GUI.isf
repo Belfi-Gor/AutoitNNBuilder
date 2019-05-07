@@ -3,6 +3,7 @@
 #include <GUIConstantsEx.au3>
 #include <WindowsConstants.au3>
 #Include <GuiButton.au3>
+#include <UpDownConstants.au3>
 #include <SliderConstants.au3>
 #include <GuiSlider.au3>
 #include <EditConstants.au3>
@@ -11,16 +12,28 @@ Global $hGUI = GUICreate("GUI",400,424,-1,-1,-1,-1)
 GUISetOnEvent($GUI_EVENT_CLOSE, "_Exit", $hGUI)
 GUICtrlCreateLabel("id объекта",0,0,60,15,-1,-1)
 GUICtrlSetBkColor(-1,"-2")
-Global $idInput_ObjectID = GUICtrlCreateInput("1",84,0,64,20,-1,$WS_EX_CLIENTEDGE)
 GUICtrlCreateLabel("Количество наблюдений:",0,23,132,15,-1,-1)
 GUICtrlSetBkColor(-1,"-2")
-Global $idInput_Counter = GUICtrlCreateInput("1",148,23,150,20,-1,$WS_EX_CLIENTEDGE)
-Global $idButton_Start = GUICtrlCreateButton("start",60,80,100,30,-1,-1)
-GUICtrlSetOnEvent(-1,"Example")
+GUICtrlCreateLabel("W",148,150,15,15,-1,-1)
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+GUICtrlSetBkColor(-1,"-2")
+GUICtrlCreateLabel("X",6,150,15,15,-1,-1)
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+GUICtrlSetBkColor(-1,"-2")
+GUICtrlCreateLabel("Y",6,163,15,15,-1,-1)
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+GUICtrlSetBkColor(-1,"-2")
+GUICtrlCreateLabel("H",148,163,15,15,-1,-1)
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+GUICtrlSetBkColor(-1,"-2")
 Global $idLabel_RawImage = GUICtrlCreateLabel("My Text",0,224,200,200,$SS_BLACKFRAME,-1)
 GUICtrlSetBkColor(-1,"-2")
 Global $idLabel_FilteredImage = GUICtrlCreateLabel("My Text",200,224,200,200,$SS_BLACKFRAME,-1)
 GUICtrlSetBkColor(-1,"-2")
+Global $idInput_ObjectID = GUICtrlCreateInput("1",84,0,64,20,-1,$WS_EX_CLIENTEDGE)
+Global $idInput_Counter = GUICtrlCreateInput("1",148,23,150,20,-1,$WS_EX_CLIENTEDGE)
+Global $idButton_Start = GUICtrlCreateButton("start",15,50,100,30,-1,-1)
+GUICtrlSetOnEvent(-1,"Example")
 Global $idSlider_RawImageZoom = GUICtrlCreateSlider(30,209,170,15,-1,-1)
 GUICtrlSetLimit($idSlider_RawImageZoom, 10, 1)
 Global $idSlider_FilteredImageScale = GUICtrlCreateSlider(220,209,80,15,-1,-1)
@@ -32,7 +45,7 @@ Global $idInput_RawImageZoom = GUICtrlCreateInput("1",0,209,30,15,$ES_CENTER,$WS
 GUICtrlSetFont(-1,6,400,0,"Calibri")
 Global $idInput_FilteredImageZoom = GUICtrlCreateInput("1",300,209,20,15,$ES_CENTER,$WS_EX_CLIENTEDGE)
 GUICtrlSetFont(-1,6,400,0,"Calibri")
-Global $idCheckbox_AutoUpdateImage = GUICtrlCreateCheckbox("Auto Update Image",0,194,95,15,-1,-1)
+Global $idCheckbox_AutoUpdateImage = GUICtrlCreateCheckbox("Auto Update Img",1,187,85,15,-1,-1)
 GUICtrlSetFont(-1,8,400,0,"Calibri")
 GUICtrlCreateGroup("Color Conversion",200,170,200,35,-1,-1)
 GUICtrlSetFont(-1,8,400,0,"Calibri")
@@ -50,6 +63,28 @@ GUICtrlSetFont(-1,8,400,0,"Calibri")
 Global $idSlider_FilteredImageZoom = GUICtrlCreateSlider(320,209,80,15,-1,-1)
 GUICtrlSetData(-1,2)
 GUICtrlSetLimit($idSlider_FilteredImageZoom, 10, 1)
+Global $idButton_PointToggle = GUICtrlCreateButton("Point",64,147,30,32,-1,-1)
+GUICtrlSetOnEvent(-1,"_Test")
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+Global $idInput_PointWidth = GUICtrlCreateInput("99",94,148,50,15, -1,$WS_EX_CLIENTEDGE)
+GUICtrlSetOnEvent(-1,"_myUpdate_Rect_From_Updown")
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+Global $idInput_PointWidth_Updown = GUICtrlCreateUpdown(-1,$UDS_ALIGNLEFT)
+Global $idInput_PointHeight = GUICtrlCreateInput("99",94,163,50,15, -1,$WS_EX_CLIENTEDGE)
+GUICtrlSetOnEvent(-1,"_myUpdate_Rect_From_Updown")
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+Global $idInput_PointHeight_Updown = GUICtrlCreateUpdown(-1,$UDS_ALIGNLEFT)
+Global $idInput_PointY = GUICtrlCreateInput("0",14,163,50,15, -1,$WS_EX_CLIENTEDGE)
+GUICtrlSetOnEvent(-1,"_myUpdate_Rect_From_Updown")
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+Global $idInput_PointY_Updown = GUICtrlCreateUpdown(-1,-1)
+Global $idInput_PointX = GUICtrlCreateInput("0",14,148,50,15, -1,$WS_EX_CLIENTEDGE)
+GUICtrlSetOnEvent(-1,"_myUpdate_Rect_From_Updown")
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+Global $idInput_PointX_Updown = GUICtrlCreateUpdown(-1,-1)
+GUICtrlCreateGroup("Настройка области захвата",3,132,164,53,-1,-1)
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+GUICtrlSetBkColor(-1,"0xF0F0F0")
 
 
 
@@ -88,8 +123,10 @@ gui_event_secoundarydown=
 gui_event_secoundaryup=
 gui_event_resized=
 gui_event_dropped=
-[0x00055068]
-handle=389
+defaultfont=MS Sans Serif
+defaultfontsize=8
+[0x00281258]
+handle=398
 locked=0
 resize=
 code=
@@ -116,8 +153,8 @@ order=0
 tabpage=-1
 iconindex=
 textmode=text
-[0x0005506A]
-handle=390
+[0x02A60E8C]
+handle=399
 locked=0
 resize=
 code=
@@ -140,12 +177,12 @@ fontattribute=0
 id=$idInput_ObjectID
 func=
 bgimage=
-order=1
+order=8
 tabpage=-1
 iconindex=
 textmode=text
-[0x0006506C]
-handle=391
+[0x00191224]
+handle=400
 locked=0
 resize=
 code=
@@ -168,12 +205,12 @@ fontattribute=0
 id=
 func=
 bgimage=
-order=2
+order=1
 tabpage=-1
 iconindex=
 textmode=text
-[0x000C49E0]
-handle=392
+[0x03144410]
+handle=401
 locked=0
 resize=
 code=
@@ -196,18 +233,18 @@ fontattribute=0
 id=$idInput_Counter
 func=
 bgimage=
-order=3
+order=9
 tabpage=-1
 iconindex=
 textmode=text
-[0x000B4D8C]
-handle=393
+[0x006F1396]
+handle=402
 locked=0
 resize=
 code=
 type=button
-x=60
-y=80
+x=15
+y=50
 width=100
 height=30
 text=start
@@ -224,12 +261,13 @@ fontattribute=0
 id=$idButton_Start
 func=Example
 bgimage=
-order=4
+order=10
 tabpage=-1
 iconindex=
 textmode=text
-[0x002D41B6]
-handle=394
+iconlarge=0
+[0x0382138A]
+handle=403
 locked=0
 resize=
 code=
@@ -252,12 +290,12 @@ fontattribute=0
 id=$idLabel_RawImage
 func=
 bgimage=
-order=5
+order=6
 tabpage=-1
 iconindex=
 textmode=text
-[0x00154D2E]
-handle=395
+[0x003E1394]
+handle=404
 locked=0
 resize=
 code=
@@ -283,9 +321,9 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=6
-[0x008720EC]
-handle=396
+order=7
+[0x005F0A4E]
+handle=405
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -308,12 +346,13 @@ fontattribute=0
 id=$idSlider_RawImageZoom
 func=
 bgimage=
-order=7
+order=11
 tabpage=-1
 iconindex=
 textmode=text
-[0x000C4E0C]
-handle=397
+iconlarge=0
+[0x027973CC]
+handle=406
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -339,9 +378,9 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=8
-[0x000A4E14]
-handle=398
+order=12
+[0x00AD096E]
+handle=407
 locked=0
 resize=
 code=
@@ -364,12 +403,13 @@ fontattribute=0
 id=$idInput_FilteredImageScale
 func=
 bgimage=
-order=9
+order=13
 tabpage=-1
 iconindex=
 textmode=text
-[0x00094D4C]
-handle=399
+iconlarge=0
+[0x007B09D4]
+handle=408
 locked=0
 resize=
 code=
@@ -395,18 +435,18 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=10
-[0x03632144]
-handle=400
+order=14
+[0x00250EB6]
+handle=409
 locked=0
 resize=
 code=
 type=checkbox
-x=0
-y=194
-width=95
+x=1
+y=187
+width=85
 height=15
-text=Auto Update Image
+text=Auto Update Img
 tooltip=
 state=$GUI_SHOW+$GUI_ENABLE
 style=
@@ -420,12 +460,13 @@ fontattribute=0
 id=$idCheckbox_AutoUpdateImage
 func=
 bgimage=
-order=12
+order=16
 tabpage=-1
 iconindex=
 textmode=text
-[0x000B4D92]
-handle=401
+iconlarge=0
+[0x00410AA4]
+handle=410
 locked=0
 resize=
 code=
@@ -448,12 +489,12 @@ fontattribute=0
 id=
 func=
 bgimage=
-order=13
+order=17
 tabpage=-1
 iconindex=
 textmode=text
-[0x00094D86]
-handle=402
+[0x00280A64]
+handle=411
 locked=0
 resize=
 code=
@@ -476,12 +517,12 @@ fontattribute=0
 id=$idRadio_FilterRed
 func=
 bgimage=
-order=14
+order=18
 tabpage=-1
 iconindex=
 textmode=text
-[0x00094DC0]
-handle=403
+[0x029C4EF0]
+handle=412
 locked=0
 resize=
 code=
@@ -507,9 +548,9 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=15
-[0x000A4164]
-handle=404
+order=19
+[0x01230DC2]
+handle=413
 locked=0
 resize=
 code=
@@ -535,9 +576,9 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=16
-[0x000B4D22]
-handle=405
+order=20
+[0x001F0E50]
+handle=414
 locked=0
 resize=
 code=
@@ -563,9 +604,9 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=17
-[0x00094D80]
-handle=406
+order=21
+[0x006C1EAC]
+handle=415
 locked=0
 resize=
 code=
@@ -591,9 +632,10 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=18
-[0x000E4CDA]
-handle=407
+order=22
+iconlarge=0
+[0x00292000]
+handle=416
 locked=0
 resize=
 code=
@@ -619,9 +661,9 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=11
-[0x000B4D5A]
-handle=408
+order=15
+[0x00501E5E]
+handle=417
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -647,5 +689,295 @@ bgimage=
 tabpage=-1
 iconindex=
 textmode=text
-order=19
+order=23
+[0x00170EFA]
+handle=418
+locked=0
+resize=
+code=
+type=label
+x=148
+y=150
+width=15
+height=15
+text=W
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=-2
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=
+func=
+bgimage=
+order=2
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+[0x002E0A6C]
+handle=419
+locked=0
+resize=
+code=
+type=label
+x=148
+y=163
+width=15
+height=15
+text=H
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=-2
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=
+func=
+bgimage=
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+order=5
+[0x0072439A]
+handle=420
+locked=0
+resize=
+code=
+type=button
+x=64
+y=147
+width=30
+height=32
+text=Point
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idButton_PointToggle
+func=_Test
+bgimage=
+order=24
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+[0x009A09DC]
+handle=421
+locked=0
+resize=
+code=
+type=label
+x=6
+y=163
+width=15
+height=15
+text=Y
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=-2
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=
+func=
+bgimage=
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+order=4
+[0x007E473C]
+handle=422
+locked=0
+resize=
+code=
+type=label
+x=6
+y=150
+width=15
+height=15
+text=X
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=-2
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=
+func=
+bgimage=
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+order=3
+[0x008E09E8]
+handle=423
+locked=0
+resize=
+code=
+type=updown
+x=14
+y=148
+width=50
+height=15
+text=0
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=$WS_EX_CLIENTEDGE
+textcolour=0x000000
+bgcolour=
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idInput_PointX
+func=_myUpdate_Rect_From_Updown
+bgimage=
+order=28
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+[0x00374E3A]
+handle=424
+locked=0
+resize=
+code=
+type=updown
+x=14
+y=163
+width=50
+height=15
+text=0
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=$WS_EX_CLIENTEDGE
+textcolour=0x000000
+bgcolour=
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idInput_PointY
+func=_myUpdate_Rect_From_Updown
+bgimage=
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+order=27
+[0x02F1138E]
+handle=425
+locked=0
+resize=
+code=
+type=updown
+x=94
+y=148
+width=50
+height=15
+text=99
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=$UDS_ALIGNLEFT
+exstyle=$WS_EX_CLIENTEDGE
+textcolour=0x000000
+bgcolour=
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idInput_PointWidth
+func=_myUpdate_Rect_From_Updown
+bgimage=
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+order=25
+[0x005D0B8A]
+handle=426
+locked=0
+resize=
+code=
+type=updown
+x=94
+y=163
+width=50
+height=15
+text=99
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=$UDS_ALIGNLEFT
+exstyle=$WS_EX_CLIENTEDGE
+textcolour=0x000000
+bgcolour=
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idInput_PointHeight
+func=_myUpdate_Rect_From_Updown
+bgimage=
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+order=26
+[0x01DB1304]
+handle=427
+locked=0
+resize=
+code=
+type=group
+x=3
+y=132
+width=164
+height=53
+text=Настройка области захвата
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=0xF0F0F0
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=
+func=
+bgimage=
+order=29
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
 #ce
