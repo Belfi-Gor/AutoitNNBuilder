@@ -1,3 +1,4 @@
+#include "recruit_bot.au3"
 #include "GUI.isf"
 #include <GDIPlus.au3>
 #include <GUIConstantsEx.au3>
