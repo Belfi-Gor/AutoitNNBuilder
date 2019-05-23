@@ -10,11 +10,14 @@ GUISetState(@SW_SHOW)
 
 While 1
 	Sleep(100)
+	If _IsChecked($idCheckbox_AutoUpdateImage) Then 
+		ProcessArea()
+	EndIf
 Wend
 
-Example()
+ProcessArea()
 
-Func Example()
+Func ProcessArea()
 ;~ 	Local Const $iLeft = 383, $iTop = 642 ;Левый верхний угол области захвата
 	Local $iLeft 	= Int(GUICtrlRead($idInput_PointX))
 	Local $iTop 	= Int(GUICtrlRead($idInput_PointY)) ;Левый верхний угол области захвата
@@ -48,14 +51,15 @@ Func Example()
 		Local $iScale = GUICtrlRead($idSlider_RawImageZoom)
 		$hBitmap1 = _GDIPlus_ImageScale($hBitmap, $iScale, $iScale, $quality) ;scale image by 275% (magnify)
 ;~ 		MsgBox(0, 0, $idLabel_RawImage)
-		_DrawImage($hBitmap1, $idLabel_RawImage)
+		_DrawImage($hBitmap1, $idLabel_RawImage) ;Отображаем оригинальное изображение
 ;~ 		_GDIPlus_ImageSaveToFile ( $hBitmap, Int(GUICtrlRead($idInput_ObjectID)) & $i & '.bmp' )
 
+;~ 		MsgBox(0, 0, GUICtrlRead($idRadio_FilterRed))
 
 
-
-
-		Local $iR, $iG, $iB, $iGrey
+		; Обрабатываем изображение
+		Local $iR, $iG, $iB, $iGrey ;Переменные куда будут записаны результаты обработки текущего пикселя
+		Local $sRow = GUICtrlRead($idInput_ObjectID); Массив в который будет записываться id результата сохраненного на изображении, так же как в датасэте MNIST
 		For $iY = 0 To $iHeight - $iTop - 1 ;Вертикально проходим по изображению
 			For $iX = 0 To $iWidth - $iLeft - 1 ;Горизонтально проходим по изображению
 				$iColor = _GDIPlus_BitmapGetPixel($hBitmap, $iX, $iY) ;Определяем цвет текущего пикселя
@@ -63,11 +67,44 @@ Func Example()
 				$iG = BitShift(BitAND($iColor, 0x0000FF00), 8) ;Извлекаем зеленый зцвет
 				$iB = BitAND($iColor, 0x000000FF) ;Извлекаем синий цвет
 				$iGrey = Hex(Int(($iR + $iG + $iB) / 3), 2) ;Получаем из RGB оттенок серого
-;~ 				_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & $iGrey & $iGrey & $iGrey) ;Перезаписываем RGB пиксель изображения на оттенок серого
+				
+				If GUICtrlRead($idRadio_FilterRed) = 1 Then 
+					If int($iR) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & $iR & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок красного
+						$sRow &= "," & $iR
+					Else 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок красного
+						$sRow &= ",0"
+					EndIf 
+				ElseIf GUICtrlRead($idRadio_FilterGreen) = 1 Then 
+					If int($iG) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & $iG & "00") ;Перезаписываем RGB пиксель изображения на оттенок зелёного
+						$sRow &= "," & $iG
+					Else 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок зелёного
+						$sRow &= ",0"
+					EndIf 
+				ElseIf GUICtrlRead($idRadio_FilterBlue) = 1 Then 
+					If int($iB) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & $iB) ;Перезаписываем RGB пиксель изображения на оттенок синего
+						$sRow &= "," & $iB
+					Else 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок синего
+						$sRow &= ",0"
+					EndIf 
+				ElseIf GUICtrlRead($idRadio_FilterShade) = 1 Then 
+					If int($iGrey) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & $iGrey & $iGrey & $iGrey) ;Перезаписываем RGB пиксель изображения на оттенок серого
+						$sRow &= "," & $iGrey
+					Else 
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок серого
+						$sRow &= ",0"
+					EndIf 
+				EndIf
 			Next
 		Next
 		
-		
+		ConsoleWrite($sRow & @cr)
 		
 		;Работаем с изображением которое используем для датасета
 		Local $iScale = GUICtrlRead($idSlider_FilteredImageScale) / 10
@@ -90,7 +127,13 @@ Func Example()
 ;~ 		Local $hGraphics = _GDIPlus_GraphicsCreateFromHWND($hGUI) ;create a graphics object from a window handle
 ;~ 		_GDIPlus_GraphicsDrawImage($hGraphics, $hBitmap, 150 + 21 + 10, 150) ;copy negative bitmap to graphics object (GUI)
 		_DrawImage($hBitmap, $idLabel_FilteredImage)
-;~ 		_GDIPlus_ImageSaveToFile ( $hBitmap, Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $i & '.bmp' )
+		If _IsChecked($idCheckbox_AutoSaveResult) Then 
+			Local $currentCounter = Int(GUICtrlRead($idInput_Counter))
+			_GDIPlus_ImageSaveToFile ( $hBitmap, Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp' )
+			FileWriteLine ( GUICtrlRead($idInput_FileName) & ".txt", $sRow & @CR )
+
+			GUICtrlSetData($idInput_Counter, $currentCounter + 1)
+		EndIf 
 	;~     Do
 	;~     Until GUIGetMsg() = $GUI_EVENT_CLOSE
 
@@ -101,6 +144,10 @@ Func Example()
     _GDIPlus_Shutdown()
 ;~     GUIDelete($hGUI)
 EndFunc   ;==>Example
+
+Func _IsChecked($idControlID)
+    Return BitAND(GUICtrlRead($idControlID), $GUI_CHECKED) = $GUI_CHECKED
+EndFunc   ;==>_IsChecked
 
 Func _DrawImage($hBitmap, $idBaseElement)
 	;Получает на вход результат функции _GDIPlus_BitmapCreateFromHBITMAP и id элемента гуя который будет базовым для отрисовки изображения
@@ -119,8 +166,8 @@ Func _DrawImage($hBitmap, $idBaseElement)
     Local $iOffset_Y = Round(_GDIPlus_ImageGetHeight($hBitmap) / 2) ;аналогично только по вертикали
 	;Теперь мы знаем отступ левого верхнего угла изображения относительно центра базового элемента
 
-	ConsoleWrite("Ширина:	" & _GDIPlus_ImageGetWidth($hBitmap))
-	ConsoleWrite("Высота:	" & _GDIPlus_ImageGetHeight($hBitmap))
+	ConsoleWrite("Ширина:	" & _GDIPlus_ImageGetWidth($hBitmap) & @CR)
+	ConsoleWrite("Высота:	" & _GDIPlus_ImageGetHeight($hBitmap) & @CR)
 
 	;Теперь мы можем рисовать изображение по центру базового элемента независимо от его местоположения и размера изображения
 	Local $hGraphics = _GDIPlus_GraphicsCreateFromHWND($hGUI) ;create a graphics object from a window handle
@@ -137,7 +184,7 @@ Func _Test()
 		GUICtrlSetData($idInput_PointY, $var[1])
 		Local $test[5] = ['Point_', $var[0] -$iHeight, $var[1] -1, $iHeight + 1, $iWidth + 1]
 		_myDraw_Rect($test)
-		Example()
+		ProcessArea()
 	Until _IsPressed("A0")
 EndFunc
 
@@ -174,7 +221,7 @@ Func _myUpdate_Rect_From_Updown()
 	Local $aVerticalRight[5] 		= ['Point_VerticalRight', 		$iLeft + $iWidth,	$iTop,					$iHeight + 1,		1]
 	_myDraw_Line($aVerticalRight)
 	
-	Example()
+	ProcessArea()
 EndFunc
 
 Func _myDraw_Line($aArray)

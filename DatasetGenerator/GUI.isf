@@ -33,7 +33,7 @@ GUICtrlSetBkColor(-1,"-2")
 Global $idInput_ObjectID = GUICtrlCreateInput("1",84,0,64,20,-1,$WS_EX_CLIENTEDGE)
 Global $idInput_Counter = GUICtrlCreateInput("1",148,23,150,20,-1,$WS_EX_CLIENTEDGE)
 Global $idButton_Start = GUICtrlCreateButton("start",15,50,100,30,-1,-1)
-GUICtrlSetOnEvent(-1,"Example")
+GUICtrlSetOnEvent(-1,"ProcessArea")
 Global $idSlider_RawImageZoom = GUICtrlCreateSlider(30,209,170,15,-1,-1)
 GUICtrlSetLimit($idSlider_RawImageZoom, 10, 1)
 Global $idSlider_FilteredImageScale = GUICtrlCreateSlider(220,209,80,15,-1,-1)
@@ -85,6 +85,15 @@ Global $idInput_PointX_Updown = GUICtrlCreateUpdown(-1,-1)
 GUICtrlCreateGroup("Настройка области захвата",3,132,164,53,-1,-1)
 GUICtrlSetFont(-1,8,400,0,"Calibri")
 GUICtrlSetBkColor(-1,"0xF0F0F0")
+Global $idInput_FilterTrigger = GUICtrlCreateInput("99",335,185,50,15, -1,$WS_EX_CLIENTEDGE)
+GUICtrlSetOnEvent(-1,"_myUpdate_Rect_From_Updown")
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+Global $idInput_FilterTrigger_Updown = GUICtrlCreateUpdown(-1,BitOr($UDS_ALIGNLEFT,$ES_NUMBER))
+Global $idCheckbox_AutoSaveResult = GUICtrlCreateCheckbox("Auto Save Result",106,187,85,15,-1,-1)
+GUICtrlSetFont(-1,8,400,0,"Calibri")
+Global $idInput_FileName = GUICtrlCreateInput("1",252,0,64,20,-1,$WS_EX_CLIENTEDGE)
+GUICtrlCreateLabel("Имя файла",167,0,60,15,-1,-1)
+GUICtrlSetBkColor(-1,"-2")
 
 
 
@@ -123,10 +132,8 @@ gui_event_secoundarydown=
 gui_event_secoundaryup=
 gui_event_resized=
 gui_event_dropped=
-defaultfont=MS Sans Serif
-defaultfontsize=8
-[0x00281258]
-handle=398
+[0x00012B00]
+handle=389
 locked=0
 resize=
 code=
@@ -153,8 +160,8 @@ order=0
 tabpage=-1
 iconindex=
 textmode=text
-[0x02A60E8C]
-handle=399
+[0x00012B02]
+handle=390
 locked=0
 resize=
 code=
@@ -181,8 +188,8 @@ order=8
 tabpage=-1
 iconindex=
 textmode=text
-[0x00191224]
-handle=400
+[0x00012B04]
+handle=391
 locked=0
 resize=
 code=
@@ -209,8 +216,8 @@ order=1
 tabpage=-1
 iconindex=
 textmode=text
-[0x03144410]
-handle=401
+[0x00012B06]
+handle=392
 locked=0
 resize=
 code=
@@ -237,8 +244,8 @@ order=9
 tabpage=-1
 iconindex=
 textmode=text
-[0x006F1396]
-handle=402
+[0x00012B08]
+handle=393
 locked=0
 resize=
 code=
@@ -259,15 +266,15 @@ fontsize=8
 fontstyle=400
 fontattribute=0
 id=$idButton_Start
-func=Example
+func=ProcessArea
 bgimage=
 order=10
 tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x0382138A]
-handle=403
+[0x00012B0A]
+handle=394
 locked=0
 resize=
 code=
@@ -294,8 +301,8 @@ order=6
 tabpage=-1
 iconindex=
 textmode=text
-[0x003E1394]
-handle=404
+[0x00012B0C]
+handle=395
 locked=0
 resize=
 code=
@@ -322,8 +329,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=7
-[0x005F0A4E]
-handle=405
+[0x00012B0E]
+handle=396
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -351,8 +358,8 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x027973CC]
-handle=406
+[0x000528EE]
+handle=397
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -379,8 +386,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=12
-[0x00AD096E]
-handle=407
+[0x00012B10]
+handle=398
 locked=0
 resize=
 code=
@@ -408,8 +415,8 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x007B09D4]
-handle=408
+[0x00012B12]
+handle=399
 locked=0
 resize=
 code=
@@ -436,8 +443,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=14
-[0x00250EB6]
-handle=409
+[0x00012B14]
+handle=400
 locked=0
 resize=
 code=
@@ -465,8 +472,8 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x00410AA4]
-handle=410
+[0x00012B16]
+handle=401
 locked=0
 resize=
 code=
@@ -493,8 +500,8 @@ order=17
 tabpage=-1
 iconindex=
 textmode=text
-[0x00280A64]
-handle=411
+[0x00012B18]
+handle=402
 locked=0
 resize=
 code=
@@ -521,8 +528,8 @@ order=18
 tabpage=-1
 iconindex=
 textmode=text
-[0x029C4EF0]
-handle=412
+[0x00012B1A]
+handle=403
 locked=0
 resize=
 code=
@@ -549,8 +556,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=19
-[0x01230DC2]
-handle=413
+[0x00012B1C]
+handle=404
 locked=0
 resize=
 code=
@@ -577,8 +584,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=20
-[0x001F0E50]
-handle=414
+[0x00012B1E]
+handle=405
 locked=0
 resize=
 code=
@@ -605,8 +612,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=21
-[0x006C1EAC]
-handle=415
+[0x00012B20]
+handle=406
 locked=0
 resize=
 code=
@@ -634,8 +641,8 @@ iconindex=
 textmode=text
 order=22
 iconlarge=0
-[0x00292000]
-handle=416
+[0x00012B22]
+handle=407
 locked=0
 resize=
 code=
@@ -662,8 +669,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=15
-[0x00501E5E]
-handle=417
+[0x00012B24]
+handle=408
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -690,8 +697,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=23
-[0x00170EFA]
-handle=418
+[0x00012B26]
+handle=409
 locked=0
 resize=
 code=
@@ -719,8 +726,8 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x002E0A6C]
-handle=419
+[0x00012B28]
+handle=410
 locked=0
 resize=
 code=
@@ -748,8 +755,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=5
-[0x0072439A]
-handle=420
+[0x00012B2A]
+handle=411
 locked=0
 resize=
 code=
@@ -777,8 +784,8 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x009A09DC]
-handle=421
+[0x00012B2C]
+handle=412
 locked=0
 resize=
 code=
@@ -806,8 +813,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=4
-[0x007E473C]
-handle=422
+[0x00012B2E]
+handle=413
 locked=0
 resize=
 code=
@@ -835,8 +842,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=3
-[0x008E09E8]
-handle=423
+[0x00012B30]
+handle=414
 locked=0
 resize=
 code=
@@ -864,8 +871,8 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x00374E3A]
-handle=424
+[0x00012B32]
+handle=415
 locked=0
 resize=
 code=
@@ -893,8 +900,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=27
-[0x02F1138E]
-handle=425
+[0x00012B34]
+handle=416
 locked=0
 resize=
 code=
@@ -922,8 +929,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=25
-[0x005D0B8A]
-handle=426
+[0x00012B36]
+handle=417
 locked=0
 resize=
 code=
@@ -951,8 +958,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=26
-[0x01DB1304]
-handle=427
+[0x00012B38]
+handle=418
 locked=0
 resize=
 code=
@@ -980,4 +987,118 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
+[0x00032D12]
+handle=427
+locked=0
+resize=
+code=
+type=updown
+x=335
+y=185
+width=50
+height=15
+text=99
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=$UDS_ALIGNLEFT+$ES_NUMBER
+exstyle=$WS_EX_CLIENTEDGE
+textcolour=0x000000
+bgcolour=
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idInput_FilterTrigger
+func=_myUpdate_Rect_From_Updown
+bgimage=
+tabpage=-1
+iconindex=
+iconlarge=0
+textmode=text
+order=31
+[0x00262B90]
+handle=428
+locked=0
+resize=
+code=
+type=checkbox
+x=106
+y=187
+width=85
+height=15
+text=Auto Save Result
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=0xF0F0F0
+font=Calibri
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idCheckbox_AutoSaveResult
+func=
+bgimage=
+tabpage=-1
+iconindex=
+textmode=text
+iconlarge=0
+order=32
+[0x00232C18]
+handle=429
+locked=0
+resize=
+code=
+type=input
+x=252
+y=0
+width=64
+height=20
+text=1
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=$WS_EX_CLIENTEDGE
+textcolour=0x000000
+bgcolour=
+font=MS Sans Serif
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=$idInput_FileName
+func=
+bgimage=
+tabpage=-1
+iconindex=
+textmode=text
+order=33
+[0x00242B8E]
+handle=430
+locked=0
+resize=
+code=
+type=label
+x=167
+y=0
+width=60
+height=15
+text=Имя файла
+tooltip=
+state=$GUI_SHOW+$GUI_ENABLE
+style=
+exstyle=
+textcolour=0x000000
+bgcolour=-2
+font=MS Sans Serif
+fontsize=8
+fontstyle=400
+fontattribute=0
+id=
+func=
+bgimage=
+tabpage=-1
+iconindex=
+textmode=text
+order=34
 #ce
