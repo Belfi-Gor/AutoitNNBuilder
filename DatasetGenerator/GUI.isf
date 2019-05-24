@@ -66,11 +66,11 @@ GUICtrlSetLimit($idSlider_FilteredImageZoom, 10, 1)
 Global $idButton_PointToggle = GUICtrlCreateButton("Point",64,147,30,32,-1,-1)
 GUICtrlSetOnEvent(-1,"_Test")
 GUICtrlSetFont(-1,8,400,0,"Calibri")
-Global $idInput_PointWidth = GUICtrlCreateInput("99",94,148,50,15, -1,$WS_EX_CLIENTEDGE)
+Global $idInput_PointWidth = GUICtrlCreateInput("2",94,148,50,15, -1,$WS_EX_CLIENTEDGE)
 GUICtrlSetOnEvent(-1,"_myUpdate_Rect_From_Updown")
 GUICtrlSetFont(-1,8,400,0,"Calibri")
 Global $idInput_PointWidth_Updown = GUICtrlCreateUpdown(-1,$UDS_ALIGNLEFT)
-Global $idInput_PointHeight = GUICtrlCreateInput("99",94,163,50,15, -1,$WS_EX_CLIENTEDGE)
+Global $idInput_PointHeight = GUICtrlCreateInput("2",94,163,50,15, -1,$WS_EX_CLIENTEDGE)
 GUICtrlSetOnEvent(-1,"_myUpdate_Rect_From_Updown")
 GUICtrlSetFont(-1,8,400,0,"Calibri")
 Global $idInput_PointHeight_Updown = GUICtrlCreateUpdown(-1,$UDS_ALIGNLEFT)
@@ -134,7 +134,7 @@ gui_event_resized=
 gui_event_dropped=
 defaultfont=MS Sans Serif
 defaultfontsize=8
-[0x000627CA]
+[0x000533F8]
 handle=420
 locked=0
 resize=
@@ -162,7 +162,7 @@ order=0
 tabpage=-1
 iconindex=
 textmode=text
-[0x000727C6]
+[0x00063432]
 handle=421
 locked=0
 resize=
@@ -190,7 +190,7 @@ order=8
 tabpage=-1
 iconindex=
 textmode=text
-[0x000B27C2]
+[0x00043200]
 handle=422
 locked=0
 resize=
@@ -218,7 +218,7 @@ order=1
 tabpage=-1
 iconindex=
 textmode=text
-[0x000627C0]
+[0x000431F8]
 handle=423
 locked=0
 resize=
@@ -246,7 +246,7 @@ order=9
 tabpage=-1
 iconindex=
 textmode=text
-[0x000A27BA]
+[0x000431F4]
 handle=424
 locked=0
 resize=
@@ -275,7 +275,7 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x000A27B4]
+[0x000431F0]
 handle=425
 locked=0
 resize=
@@ -303,7 +303,7 @@ order=6
 tabpage=-1
 iconindex=
 textmode=text
-[0x000F27B2]
+[0x000431EE]
 handle=426
 locked=0
 resize=
@@ -331,7 +331,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=7
-[0x000C27B0]
+[0x000431EC]
 handle=427
 locked=0
 resize=
@@ -360,7 +360,7 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x000A27AA]
+[0x00053328]
 handle=428
 locked=0
 resize=
@@ -388,7 +388,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=12
-[0x000B27A2]
+[0x000631E0]
 handle=429
 locked=0
 resize=
@@ -417,7 +417,7 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x000C279E]
+[0x000431F2]
 handle=430
 locked=0
 resize=
@@ -445,7 +445,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=14
-[0x0094279A]
+[0x000231DE]
 handle=431
 locked=0
 resize=
@@ -474,7 +474,7 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x000D2798]
+[0x000231DC]
 handle=432
 locked=0
 resize=
@@ -502,7 +502,7 @@ order=17
 tabpage=-1
 iconindex=
 textmode=text
-[0x000E1518]
+[0x000231DA]
 handle=433
 locked=0
 resize=
@@ -530,7 +530,7 @@ order=18
 tabpage=-1
 iconindex=
 textmode=text
-[0x02B30FEA]
+[0x000231D8]
 handle=434
 locked=0
 resize=
@@ -558,7 +558,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=19
-[0x000D0F94]
+[0x000231D0]
 handle=435
 locked=0
 resize=
@@ -586,7 +586,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=20
-[0x000D0F90]
+[0x000231CE]
 handle=436
 locked=0
 resize=
@@ -614,7 +614,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=21
-[0x000F0F88]
+[0x000231CC]
 handle=437
 locked=0
 resize=
@@ -643,7 +643,7 @@ iconindex=
 textmode=text
 order=22
 iconlarge=0
-[0x00110F76]
+[0x000231CA]
 handle=438
 locked=0
 resize=
@@ -671,7 +671,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=15
-[0x00440C84]
+[0x000231C8]
 handle=439
 locked=0
 resize=
@@ -699,7 +699,7 @@ tabpage=-1
 iconindex=
 textmode=text
 order=23
-[0x02B80BFA]
+[0x000231C6]
 handle=440
 locked=0
 resize=
@@ -728,7 +728,7 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x000909B6]
+[0x000231C4]
 handle=441
 locked=0
 resize=
@@ -757,7 +757,7 @@ iconindex=
 iconlarge=0
 textmode=text
 order=5
-[0x001E08C4]
+[0x000231C2]
 handle=442
 locked=0
 resize=
@@ -786,7 +786,7 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x00150746]
+[0x000231C0]
 handle=443
 locked=0
 resize=
@@ -815,7 +815,7 @@ iconindex=
 iconlarge=0
 textmode=text
 order=4
-[0x000E28F2]
+[0x000231BE]
 handle=444
 locked=0
 resize=
@@ -844,7 +844,7 @@ iconindex=
 iconlarge=0
 textmode=text
 order=3
-[0x00033326]
+[0x000231B6]
 handle=445
 locked=0
 resize=
@@ -873,7 +873,7 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x00033324]
+[0x000231B2]
 handle=446
 locked=0
 resize=
@@ -902,7 +902,7 @@ iconindex=
 iconlarge=0
 textmode=text
 order=27
-[0x000333AA]
+[0x000231B0]
 handle=447
 locked=0
 resize=
@@ -912,7 +912,7 @@ x=94
 y=148
 width=50
 height=15
-text=99
+text=2
 tooltip=
 state=$GUI_SHOW+$GUI_ENABLE
 style=$UDS_ALIGNLEFT
@@ -931,7 +931,7 @@ iconindex=
 iconlarge=0
 textmode=text
 order=25
-[0x000333AC]
+[0x000231AE]
 handle=448
 locked=0
 resize=
@@ -941,7 +941,7 @@ x=94
 y=163
 width=50
 height=15
-text=99
+text=2
 tooltip=
 state=$GUI_SHOW+$GUI_ENABLE
 style=$UDS_ALIGNLEFT
@@ -960,7 +960,7 @@ iconindex=
 iconlarge=0
 textmode=text
 order=26
-[0x000333A8]
+[0x000231AC]
 handle=449
 locked=0
 resize=
@@ -989,7 +989,7 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x0002324C]
+[0x000231AA]
 handle=450
 locked=0
 resize=
@@ -1018,7 +1018,7 @@ iconindex=
 iconlarge=0
 textmode=text
 order=31
-[0x00023222]
+[0x000231A8]
 handle=451
 locked=0
 resize=
@@ -1047,7 +1047,7 @@ iconindex=
 textmode=text
 iconlarge=0
 order=32
-[0x0002320E]
+[0x000231A6]
 handle=452
 locked=0
 resize=
@@ -1076,7 +1076,7 @@ iconindex=
 textmode=text
 order=33
 iconlarge=0
-[0x0002320C]
+[0x000231A4]
 handle=453
 locked=0
 resize=

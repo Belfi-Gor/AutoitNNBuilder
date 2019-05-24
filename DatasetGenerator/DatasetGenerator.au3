@@ -10,7 +10,7 @@ GUISetState(@SW_SHOW)
 
 While 1
 	Sleep(100)
-	If _IsChecked($idCheckbox_AutoUpdateImage) Then 
+	If _IsChecked($idCheckbox_AutoUpdateImage) Then
 		ProcessArea()
 	EndIf
 Wend
@@ -28,7 +28,7 @@ Func ProcessArea()
 	GUICtrlSetData($idInput_FilteredImageZoom, GUICtrlRead($idSlider_FilteredImageZoom))
     _GDIPlus_Startup()
 ;~ 	For  $i = 0 To Int(GUICtrlRead($idInput_Counter)) -1 Step 1 ;Узнаем id для которого генерируем изображения
-		
+
 		Local $iColor = 0 ;Переменная куда сохранится текущий цвет пикселя
 		Local $hHBmp = _ScreenCapture_Capture("", $iLeft, $iTop, $iWidth, $iHeight) ;create a GDI bitmap by capturing an area on desktop
 		Local $hBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hHBmp) ;convert GDI to GDI+ bitmap
@@ -36,9 +36,9 @@ Func ProcessArea()
 
 ;~ 		Local $hGraphics = _GDIPlus_GraphicsCreateFromHWND($hGUI) ;create a graphics object from a window handle
 ;~ 		_GDIPlus_GraphicsDrawImage($hGraphics, $hBitmap, 150, 150) ;copy negative bitmap to graphics object (GUI)
-		
+
 		$quality = $GDIP_INTERPOLATIONMODE_NearestNeighbor
-		
+
 ;~ $GDIP_INTERPOLATIONMODE_LowQuality
 ;~ $GDIP_INTERPOLATIONMODE_HighQuality
 ;~ $GDIP_INTERPOLATIONMODE_Bilinear
@@ -46,7 +46,7 @@ Func ProcessArea()
 ;~ $GDIP_INTERPOLATIONMODE_NearestNeighbor
 ;~ $GDIP_INTERPOLATIONMODE_HighQualityBilinear
 ;~ $GDIP_INTERPOLATIONMODE_HighQualityBicubic
-		
+
 		;Работаем с оригинальным изображением, которое нужно только чтобы посмотреть что там ваще есть
 		Local $iScale = GUICtrlRead($idSlider_RawImageZoom)
 		$hBitmap1 = _GDIPlus_ImageScale($hBitmap, $iScale, $iScale, $quality) ;scale image by 275% (magnify)
@@ -60,62 +60,69 @@ Func ProcessArea()
 		; Обрабатываем изображение
 		Local $iR, $iG, $iB, $iGrey ;Переменные куда будут записаны результаты обработки текущего пикселя
 		Local $sRow = GUICtrlRead($idInput_ObjectID); Массив в который будет записываться id результата сохраненного на изображении, так же как в датасэте MNIST
-		For $iY = 0 To $iHeight - $iTop - 1 ;Вертикально проходим по изображению
-			For $iX = 0 To $iWidth - $iLeft - 1 ;Горизонтально проходим по изображению
+		For $iY = 0 To $iHeight - $iTop ;Вертикально проходим по изображению
+			For $iX = 0 To $iWidth - $iLeft ;Горизонтально проходим по изображению
 				$iColor = _GDIPlus_BitmapGetPixel($hBitmap, $iX, $iY) ;Определяем цвет текущего пикселя
+;~ 				MsgBox(0, 0, $iColor)
 				$iR = BitShift(BitAND($iColor, 0x00FF0000), 16) ;Извлекаем красный цвет
 				$iG = BitShift(BitAND($iColor, 0x0000FF00), 8) ;Извлекаем зеленый зцвет
 				$iB = BitAND($iColor, 0x000000FF) ;Извлекаем синий цвет
-				$iGrey = Hex(Int(($iR + $iG + $iB) / 3), 2) ;Получаем из RGB оттенок серого
-				
-				If GUICtrlRead($idRadio_FilterRed) = 1 Then 
-					If int($iR) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
-						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & $iR & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок красного
-						$sRow &= "," & $iR
-					Else 
+				$iGrey = Int(($iR + $iG + $iB) / 3) ;Получаем из RGB оттенок серого
+;~ 				ConsoleWrite("Color(Dec):" & $iColor & "; Color(Hex):" & Hex($iColor) & " = R:" & $iR & "; G:" & $iG & "; B:" & $iB & "; Grey:" & $iGrey & @CR)
+				If GUICtrlRead($idRadio_FilterRed) = 1 Then
+					If int($iR) > Int(GUICtrlRead($idInput_FilterTrigger)) Then
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & Hex($iR, 2) & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок красного
+						$sRow &= "," & Int($iR)
+					Else
+;~ 						MsgBox(0, int($iR), Int(GUICtrlRead($idInput_FilterTrigger)))
+;~ 						ConsoleWrite("Заливаю черным потому что " & Int($iR) & "<" & Int(GUICtrlRead($idInput_FilterTrigger)))
 						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок красного
 						$sRow &= ",0"
-					EndIf 
-				ElseIf GUICtrlRead($idRadio_FilterGreen) = 1 Then 
-					If int($iG) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
-						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & $iG & "00") ;Перезаписываем RGB пиксель изображения на оттенок зелёного
-						$sRow &= "," & $iG
-					Else 
+					EndIf
+				ElseIf GUICtrlRead($idRadio_FilterGreen) = 1 Then
+					If int($iG) > Int(GUICtrlRead($idInput_FilterTrigger)) Then
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & Hex($iG,2) & "00") ;Перезаписываем RGB пиксель изображения на оттенок зелёного
+						$sRow &= "," & Int($iG)
+					Else
 						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок зелёного
 						$sRow &= ",0"
-					EndIf 
-				ElseIf GUICtrlRead($idRadio_FilterBlue) = 1 Then 
-					If int($iB) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
-						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & $iB) ;Перезаписываем RGB пиксель изображения на оттенок синего
-						$sRow &= "," & $iB
-					Else 
+					EndIf
+				ElseIf GUICtrlRead($idRadio_FilterBlue) = 1 Then
+					If int($iB) > Int(GUICtrlRead($idInput_FilterTrigger)) Then
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & Hex($iB, 2)) ;Перезаписываем RGB пиксель изображения на оттенок синего
+						$sRow &= "," & Int($iB)
+					Else
 						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок синего
 						$sRow &= ",0"
-					EndIf 
-				ElseIf GUICtrlRead($idRadio_FilterShade) = 1 Then 
-					If int($iGrey) > Int(GUICtrlRead($idInput_FilterTrigger)) Then 
-						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & $iGrey & $iGrey & $iGrey) ;Перезаписываем RGB пиксель изображения на оттенок серого
-						$sRow &= "," & $iGrey
-					Else 
+					EndIf
+				ElseIf GUICtrlRead($idRadio_FilterShade) = 1 Then
+					If int($iGrey) > Int(GUICtrlRead($idInput_FilterTrigger)) Then
+
+						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & Hex($iGrey,2) & Hex($iGrey,2) & Hex($iGrey,2)) ;Перезаписываем RGB пиксель изображения на оттенок серого
+						$sRow &= "," & Int($iGrey)
+					Else
+;~ 						MsgBox(0, int($iGrey), Int(GUICtrlRead($idInput_FilterTrigger)))
 						_GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, "0xFF" & "00" & "00" & "00") ;Перезаписываем RGB пиксель изображения на оттенок серого
 						$sRow &= ",0"
-					EndIf 
+					EndIf
 				EndIf
 			Next
 		Next
-		
+
 		ConsoleWrite($sRow & @cr)
-		
+
 		;Работаем с изображением которое используем для датасета
 		Local $iScale = GUICtrlRead($idSlider_FilteredImageScale) / 10
 		$hBitmap = _GDIPlus_ImageScale($hBitmap, $iScale, $iScale, $quality) ;scale image by 275% (magnify)
-		
+
 		Local $iZoom = GUICtrlRead($idSlider_FilteredImageZoom)
 		$hBitmap = _GDIPlus_ImageScale($hBitmap, $iZoom, $iZoom, $quality) ;scale image by 275% (magnify)
-		
+
 ;~ 		  ModeInvalid,
 
-
+0x405364
+0x4d6378
+0x690e0e
 ;~ $GDIP_INTERPOLATIONMODE_LowQuality
 ;~ $GDIP_INTERPOLATIONMODE_HighQuality
 ;~ $GDIP_INTERPOLATIONMODE_Bilinear
@@ -123,17 +130,17 @@ Func ProcessArea()
 ;~ $GDIP_INTERPOLATIONMODE_NearestNeighbor
 ;~ $GDIP_INTERPOLATIONMODE_HighQualityBilinear
 ;~ $GDIP_INTERPOLATIONMODE_HighQualityBicubic
-	
+
 ;~ 		Local $hGraphics = _GDIPlus_GraphicsCreateFromHWND($hGUI) ;create a graphics object from a window handle
 ;~ 		_GDIPlus_GraphicsDrawImage($hGraphics, $hBitmap, 150 + 21 + 10, 150) ;copy negative bitmap to graphics object (GUI)
 		_DrawImage($hBitmap, $idLabel_FilteredImage)
-		If _IsChecked($idCheckbox_AutoSaveResult) Then 
+		If _IsChecked($idCheckbox_AutoSaveResult) Then
 			;Сохранение должно идти в отдельную папку
-			
+
 			Local $currentCounter = Int(GUICtrlRead($idInput_Counter))
-			MsgBox(0, 0, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" & Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp')
+;~ 			MsgBox(0, 0, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" & Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp')
 			_GDIPlus_ImageSaveToFile ( $hBitmap, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" & Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp' )
-			MsgBox(0, 0, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" &  GUICtrlRead($idInput_FileName) & ".txt")
+;~ 			MsgBox(0, 0, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" &  GUICtrlRead($idInput_FileName) & ".txt")
 			Local $test = FileWriteLine (@ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" &  GUICtrlRead($idInput_FileName) & ".txt", $sRow & @CR )
 			If Not $test Then
 				DirCreate(@ScriptDir & "\" & GUICtrlRead($idInput_FileName))
@@ -141,14 +148,14 @@ Func ProcessArea()
 				FileWriteLine (@ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" &  GUICtrlRead($idInput_FileName) & ".txt", $sRow & @CR )
 			EndIf
 			GUICtrlSetData($idInput_Counter, $currentCounter + 1)
-		EndIf 
+		EndIf
 	;~     Do
 	;~     Until GUIGetMsg() = $GUI_EVENT_CLOSE
 
 		;cleanup GDI+ resources
-		
+
 ;~ 		Sleep(1000)
-;~ 	Next 
+;~ 	Next
     _GDIPlus_Shutdown()
 ;~     GUIDelete($hGUI)
 EndFunc   ;==>Example
@@ -186,7 +193,7 @@ EndFunc
 Func _Test()
 	Local $iWidth 	= Int(GUICtrlRead($idInput_PointWidth))
 	Local $iHeight 	= Int(GUICtrlRead($idInput_PointHeight))
-	Do 
+	Do
 		Local $var = MouseGetPos()
 		GUICtrlSetData($idInput_PointX, $var[0] - $iHeight)
 		GUICtrlSetData($idInput_PointY, $var[1])
@@ -196,17 +203,17 @@ Func _Test()
 	Until _IsPressed("A0")
 EndFunc
 
-Func _myDraw_Rect($aArray) 	
+Func _myDraw_Rect($aArray)
 							;											X							Y							H					W
 	Local $aHorizontalTop[5] 		= [$aArray[0]&'HorizontalTop', 		$aArray[1], 				$aArray[2], 				1,					$aArray[4]]
 	_myDraw_Line($aHorizontalTop)
-	
+
 	Local $aHorizontalBottom[5] 	= [$aArray[0]&'HorizontalBottom', 	$aArray[1], 				$aArray[2] + $aArray[3], 	1,					$aArray[4]]
 	_myDraw_Line($aHorizontalBottom)
-	
+
 	Local $aVerticalLeft[5] 		= [$aArray[0]&'VerticalLeft', 		$aArray[1], 				$aArray[2], 				$aArray[3],			1]
 	_myDraw_Line($aVerticalLeft)
-	
+
 	Local $aVerticalRight[5] 		= [$aArray[0]&'VerticalRight', 		$aArray[1] + $aArray[4],	$aArray[2],					$aArray[3],		1]
 	_myDraw_Line($aVerticalRight)
 EndFunc
@@ -215,20 +222,20 @@ Func _myUpdate_Rect_From_Updown()
 	Local $iLeft 	= Int(GUICtrlRead($idInput_PointX)) -1
 	Local $iTop 	= Int(GUICtrlRead($idInput_PointY)) -1;Левый верхний угол области захвата
 	Local $iWidth 	= Int(GUICtrlRead($idInput_PointWidth)) + 2
-	Local $iHeight 	= Int(GUICtrlRead($idInput_PointHeight)) + 2;Ширина и высота области захвата	
+	Local $iHeight 	= Int(GUICtrlRead($idInput_PointHeight)) + 2;Ширина и высота области захвата
 							;											X							Y							H					W
 	Local $aHorizontalTop[5] 		= ['Point_HorizontalTop', 		$iLeft, 				$iTop, 				1,					$iWidth]
 	_myDraw_Line($aHorizontalTop)
-	
+
 	Local $aHorizontalBottom[5] 	= ['Point_HorizontalBottom', 	$iLeft, 				$iTop + $iHeight, 	1,					$iWidth]
 	_myDraw_Line($aHorizontalBottom)
-	
+
 	Local $aVerticalLeft[5] 		= ['Point_VerticalLeft', 		$iLeft, 				$iTop, 				$iHeight,			1]
 	_myDraw_Line($aVerticalLeft)
-	
+
 	Local $aVerticalRight[5] 		= ['Point_VerticalRight', 		$iLeft + $iWidth,	$iTop,					$iHeight + 1,		1]
 	_myDraw_Line($aVerticalRight)
-	
+
 	ProcessArea()
 EndFunc
 
@@ -238,14 +245,14 @@ Func _myDraw_Line($aArray)
 		Автоматически вычисляет отступы от левого и верхнего угла окна, чтобы работать в режиме клиентской части
 		$sWinName - состоит из двух частей. 1-я часть это стринг "EVE - ", Вторая часть - это имя персонажа. Получаемое от интеграционного ядра.
 		На данный момент не предусматривается использование с несколькими окнами. Одно интеграционное ядро - одно окно.
-	
+
 		Логика работы:
 		1) На вход подается массив: [Имя массива_line, x,y,height]
 		2) Проверяется есть ли глобальная переменная "Имя массива_line"
 		3) Если нету в эту переменную создается гуй с линией
 		4) Если есть, то гуй с таким именем перемещается на новые координаты
 	#ce
-	
+
 ;~ 	my_Debug("myDrawLine - Start", 1)
 
 	#Region - Пересохраняем массив в переменные с читабельными названиями
@@ -254,8 +261,8 @@ Func _myDraw_Line($aArray)
 	Local $iY = $aArray[2]
 	Local $iHeight = $aArray[3]
 	Local $iWidth = $aArray[4]
-	
-	
+
+
 	Dim $cnf_winHorizontalOffset = 8
 	Dim $cnf_winVerticalOffset = 31
 	#EndRegion - Пересохраняем массив в переменные с читабельными названиями
