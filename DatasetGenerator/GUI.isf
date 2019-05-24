@@ -91,8 +91,8 @@ GUICtrlSetFont(-1,8,400,0,"Calibri")
 Global $idInput_FilterTrigger_Updown = GUICtrlCreateUpdown(-1,BitOr($UDS_ALIGNLEFT,$ES_NUMBER))
 Global $idCheckbox_AutoSaveResult = GUICtrlCreateCheckbox("Auto Save Result",106,187,85,15,-1,-1)
 GUICtrlSetFont(-1,8,400,0,"Calibri")
-Global $idInput_FileName = GUICtrlCreateInput("1",252,0,64,20,-1,$WS_EX_CLIENTEDGE)
-GUICtrlCreateLabel("Имя файла",167,0,60,15,-1,-1)
+Global $idInput_FileName = GUICtrlCreateInput("1",209,0,64,20,-1,$WS_EX_CLIENTEDGE)
+GUICtrlCreateLabel("Имя файла",149,0,60,15,-1,-1)
 GUICtrlSetBkColor(-1,"-2")
 
 
@@ -132,8 +132,10 @@ gui_event_secoundarydown=
 gui_event_secoundaryup=
 gui_event_resized=
 gui_event_dropped=
-[0x00012B00]
-handle=389
+defaultfont=MS Sans Serif
+defaultfontsize=8
+[0x000627CA]
+handle=420
 locked=0
 resize=
 code=
@@ -160,8 +162,8 @@ order=0
 tabpage=-1
 iconindex=
 textmode=text
-[0x00012B02]
-handle=390
+[0x000727C6]
+handle=421
 locked=0
 resize=
 code=
@@ -188,8 +190,8 @@ order=8
 tabpage=-1
 iconindex=
 textmode=text
-[0x00012B04]
-handle=391
+[0x000B27C2]
+handle=422
 locked=0
 resize=
 code=
@@ -216,8 +218,8 @@ order=1
 tabpage=-1
 iconindex=
 textmode=text
-[0x00012B06]
-handle=392
+[0x000627C0]
+handle=423
 locked=0
 resize=
 code=
@@ -244,8 +246,8 @@ order=9
 tabpage=-1
 iconindex=
 textmode=text
-[0x00012B08]
-handle=393
+[0x000A27BA]
+handle=424
 locked=0
 resize=
 code=
@@ -273,8 +275,8 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x00012B0A]
-handle=394
+[0x000A27B4]
+handle=425
 locked=0
 resize=
 code=
@@ -301,8 +303,8 @@ order=6
 tabpage=-1
 iconindex=
 textmode=text
-[0x00012B0C]
-handle=395
+[0x000F27B2]
+handle=426
 locked=0
 resize=
 code=
@@ -329,8 +331,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=7
-[0x00012B0E]
-handle=396
+[0x000C27B0]
+handle=427
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -358,8 +360,8 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x000528EE]
-handle=397
+[0x000A27AA]
+handle=428
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -386,8 +388,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=12
-[0x00012B10]
-handle=398
+[0x000B27A2]
+handle=429
 locked=0
 resize=
 code=
@@ -415,8 +417,8 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x00012B12]
-handle=399
+[0x000C279E]
+handle=430
 locked=0
 resize=
 code=
@@ -443,8 +445,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=14
-[0x00012B14]
-handle=400
+[0x0094279A]
+handle=431
 locked=0
 resize=
 code=
@@ -472,8 +474,8 @@ tabpage=-1
 iconindex=
 textmode=text
 iconlarge=0
-[0x00012B16]
-handle=401
+[0x000D2798]
+handle=432
 locked=0
 resize=
 code=
@@ -500,8 +502,8 @@ order=17
 tabpage=-1
 iconindex=
 textmode=text
-[0x00012B18]
-handle=402
+[0x000E1518]
+handle=433
 locked=0
 resize=
 code=
@@ -528,8 +530,8 @@ order=18
 tabpage=-1
 iconindex=
 textmode=text
-[0x00012B1A]
-handle=403
+[0x02B30FEA]
+handle=434
 locked=0
 resize=
 code=
@@ -556,8 +558,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=19
-[0x00012B1C]
-handle=404
+[0x000D0F94]
+handle=435
 locked=0
 resize=
 code=
@@ -584,8 +586,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=20
-[0x00012B1E]
-handle=405
+[0x000D0F90]
+handle=436
 locked=0
 resize=
 code=
@@ -612,8 +614,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=21
-[0x00012B20]
-handle=406
+[0x000F0F88]
+handle=437
 locked=0
 resize=
 code=
@@ -641,8 +643,8 @@ iconindex=
 textmode=text
 order=22
 iconlarge=0
-[0x00012B22]
-handle=407
+[0x00110F76]
+handle=438
 locked=0
 resize=
 code=
@@ -669,8 +671,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=15
-[0x00012B24]
-handle=408
+[0x00440C84]
+handle=439
 locked=0
 resize=
 code=GUICtrlSetLimit($control_handle, 10, 1)
@@ -697,8 +699,8 @@ tabpage=-1
 iconindex=
 textmode=text
 order=23
-[0x00012B26]
-handle=409
+[0x02B80BFA]
+handle=440
 locked=0
 resize=
 code=
@@ -726,8 +728,8 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x00012B28]
-handle=410
+[0x000909B6]
+handle=441
 locked=0
 resize=
 code=
@@ -755,8 +757,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=5
-[0x00012B2A]
-handle=411
+[0x001E08C4]
+handle=442
 locked=0
 resize=
 code=
@@ -784,8 +786,8 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x00012B2C]
-handle=412
+[0x00150746]
+handle=443
 locked=0
 resize=
 code=
@@ -813,8 +815,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=4
-[0x00012B2E]
-handle=413
+[0x000E28F2]
+handle=444
 locked=0
 resize=
 code=
@@ -842,8 +844,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=3
-[0x00012B30]
-handle=414
+[0x00033326]
+handle=445
 locked=0
 resize=
 code=
@@ -871,8 +873,8 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x00012B32]
-handle=415
+[0x00033324]
+handle=446
 locked=0
 resize=
 code=
@@ -900,8 +902,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=27
-[0x00012B34]
-handle=416
+[0x000333AA]
+handle=447
 locked=0
 resize=
 code=
@@ -929,8 +931,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=25
-[0x00012B36]
-handle=417
+[0x000333AC]
+handle=448
 locked=0
 resize=
 code=
@@ -958,8 +960,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=26
-[0x00012B38]
-handle=418
+[0x000333A8]
+handle=449
 locked=0
 resize=
 code=
@@ -987,8 +989,8 @@ tabpage=-1
 iconindex=
 iconlarge=0
 textmode=text
-[0x00032D12]
-handle=427
+[0x0002324C]
+handle=450
 locked=0
 resize=
 code=
@@ -1016,8 +1018,8 @@ iconindex=
 iconlarge=0
 textmode=text
 order=31
-[0x00262B90]
-handle=428
+[0x00023222]
+handle=451
 locked=0
 resize=
 code=
@@ -1045,13 +1047,13 @@ iconindex=
 textmode=text
 iconlarge=0
 order=32
-[0x00232C18]
-handle=429
+[0x0002320E]
+handle=452
 locked=0
 resize=
 code=
 type=input
-x=252
+x=209
 y=0
 width=64
 height=20
@@ -1073,13 +1075,14 @@ tabpage=-1
 iconindex=
 textmode=text
 order=33
-[0x00242B8E]
-handle=430
+iconlarge=0
+[0x0002320C]
+handle=453
 locked=0
 resize=
 code=
 type=label
-x=167
+x=149
 y=0
 width=60
 height=15
@@ -1101,4 +1104,5 @@ tabpage=-1
 iconindex=
 textmode=text
 order=34
+iconlarge=0
 #ce

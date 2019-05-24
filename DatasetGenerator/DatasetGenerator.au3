@@ -128,10 +128,18 @@ Func ProcessArea()
 ;~ 		_GDIPlus_GraphicsDrawImage($hGraphics, $hBitmap, 150 + 21 + 10, 150) ;copy negative bitmap to graphics object (GUI)
 		_DrawImage($hBitmap, $idLabel_FilteredImage)
 		If _IsChecked($idCheckbox_AutoSaveResult) Then 
+			;Сохранение должно идти в отдельную папку
+			
 			Local $currentCounter = Int(GUICtrlRead($idInput_Counter))
-			_GDIPlus_ImageSaveToFile ( $hBitmap, Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp' )
-			FileWriteLine ( GUICtrlRead($idInput_FileName) & ".txt", $sRow & @CR )
-
+			MsgBox(0, 0, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" & Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp')
+			_GDIPlus_ImageSaveToFile ( $hBitmap, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" & Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp' )
+			MsgBox(0, 0, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" &  GUICtrlRead($idInput_FileName) & ".txt")
+			Local $test = FileWriteLine (@ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" &  GUICtrlRead($idInput_FileName) & ".txt", $sRow & @CR )
+			If Not $test Then
+				DirCreate(@ScriptDir & "\" & GUICtrlRead($idInput_FileName))
+				_GDIPlus_ImageSaveToFile ( $hBitmap, @ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" & Int(GUICtrlRead($idInput_ObjectID)) &"-"&  $currentCounter & '.bmp' )
+				FileWriteLine (@ScriptDir & "\" & GUICtrlRead($idInput_FileName) & "\" &  GUICtrlRead($idInput_FileName) & ".txt", $sRow & @CR )
+			EndIf
 			GUICtrlSetData($idInput_Counter, $currentCounter + 1)
 		EndIf 
 	;~     Do
@@ -199,15 +207,15 @@ Func _myDraw_Rect($aArray)
 	Local $aVerticalLeft[5] 		= [$aArray[0]&'VerticalLeft', 		$aArray[1], 				$aArray[2], 				$aArray[3],			1]
 	_myDraw_Line($aVerticalLeft)
 	
-	Local $aVerticalRight[5] 		= [$aArray[0]&'VerticalRight', 		$aArray[1] + $aArray[4],	$aArray[2],					$aArray[3] + 1,		1]
+	Local $aVerticalRight[5] 		= [$aArray[0]&'VerticalRight', 		$aArray[1] + $aArray[4],	$aArray[2],					$aArray[3],		1]
 	_myDraw_Line($aVerticalRight)
 EndFunc
 
 Func _myUpdate_Rect_From_Updown()
-	Local $iLeft 	= Int(GUICtrlRead($idInput_PointX))
-	Local $iTop 	= Int(GUICtrlRead($idInput_PointY)) ;Левый верхний угол области захвата
-	Local $iWidth 	= Int(GUICtrlRead($idInput_PointWidth)) -1
-	Local $iHeight 	= Int(GUICtrlRead($idInput_PointHeight)) -1;Ширина и высота области захвата	
+	Local $iLeft 	= Int(GUICtrlRead($idInput_PointX)) -1
+	Local $iTop 	= Int(GUICtrlRead($idInput_PointY)) -1;Левый верхний угол области захвата
+	Local $iWidth 	= Int(GUICtrlRead($idInput_PointWidth)) + 2
+	Local $iHeight 	= Int(GUICtrlRead($idInput_PointHeight)) + 2;Ширина и высота области захвата	
 							;											X							Y							H					W
 	Local $aHorizontalTop[5] 		= ['Point_HorizontalTop', 		$iLeft, 				$iTop, 				1,					$iWidth]
 	_myDraw_Line($aHorizontalTop)
